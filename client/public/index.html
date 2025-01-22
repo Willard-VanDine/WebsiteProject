@@ -10,32 +10,36 @@
   <link rel="stylesheet" type="text/css" href="main.css" />
 </head>
 
-<body>
+<body class="container-fluid">
 
-  <!-- Header -->
-  <header>
-    <h1>Header</h1>
-  </header>
+  
+    <!-- Header Section -->
+      <header class="row rounded-lg">
+        <div class="col-12 bg-light p-3">Header Section</div>
+      </header>
 
-  <!-- Main Content Area -->
-  <div class="main-container">
-    <!-- Sidebar -->
-    <aside>
-      <h2>Sidebar</h2>
-      <p>Left sidebar content goes here.</p>
-    </aside>
-
-    <!-- Game Field (Main Content) -->
-    <div class="game-field">
-      <h2>Game Field</h2>
-      <p>Main content (game field) goes here.</p>
-    </div>
-  </div>
-
-  <!-- Footer -->
-  <footer>
-    <h4>Footer</h4>
-  </footer>
+    <!-- Main Section -->
+    
+      <div class="row main">
+        <!-- Sidebar -->
+        <div class="col-md-3 bg-secondary p-3 d-none d-md-block">Sidebar</div>
+        
+        <!-- Content Area -->
+        <div class="col-md-9 col-12 d-flex flex-column">
+            <div class="row gameboard">
+                <div class="col-12">game</div>
+            </div>
+            <div class="row d-flex justify-content-around align-items-center buttoncontainer">
+                <button type="button" class="btn btn-primary btn-lg col-3">Rock</button>
+                <button type="button" class="btn btn-primary btn-lg col-3">Paper</button>
+                <button type="button" class="btn btn-primary btn-lg col-3">Scissor</button>
+            </div>
+        </div>
+      </div>
+    <!-- Footer -->
+    <footer class = "row">
+        <div class="col-12 bg-light p-3">Footer Section</div>
+    </footer>
 
 </body>
 
