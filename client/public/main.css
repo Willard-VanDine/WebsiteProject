@@ -34,3 +34,43 @@ footer{
     height: 16vh;
     background-color: white;
 }
+
+/* 
+===================================
+   Homepage Style ↓
+=================================== 
+*/
+
+.homepage-container{
+    height: 90vh;
+}
+
+.homepage-header {
+    background-color: aquamarine;
+    height: 5vh;
+    width: 100vw;
+    margin: 0;
+}
+
+
+.homepage-article, .homepage-section {
+    background-color: white;
+    border-radius: 10px;
+    height: 44vh;
+}
+
+.homepage-article{
+    margin-bottom: 1vh;
+}
+
+.homepage-section{
+    margin-top: 1vh;
+}
+
+
+.homepage-footer {
+    background-color: blueviolet;
+    height: 5vh;
+    width: 100vw;
+    margin: 0;
+}
