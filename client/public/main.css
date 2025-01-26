@@ -74,3 +74,10 @@ footer{
     width: 100vw;
     margin: 0;
 }
+
+/* We use this to more cleanly split a section in 2 vertical halves */
+.homepage-half-section {
+    height: 50%;
+    width : 100%;
+    flex-direction: column;
+}
