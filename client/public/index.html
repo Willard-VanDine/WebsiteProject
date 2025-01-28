@@ -13,28 +13,32 @@
 <body>
 
   <!-- Header Section -->
-  <header>Header</header>
+  <header><a href="homepage.html">Home</a></header>
 
   <!-- Container for the main section -->
   <div class="container">
     <!-- Grid row for main section -->
     <div class="row main">
       <!-- Sidebar with col2 -->
-      <aside class="col-2 rounder">Sidebar </aside>
+      <aside class="col-2 rounder ">Sidebar </aside>
 
       <!-- Content Area with col10 -->
-      <div class="col-10">
+      <div class="col-10 d-flex flex-column justify-content-between">
         <!-- Gameboard -->
         <div class="gameboard rounder">Game </div>
         <!-- Container for buttoncontainer -->
-        <div class="container">
+        <div class="container h-25">
           <!-- Grid row for buttoncontainer -->
-          <div class="row rounder buttoncontainer d-flex justify-content-around align-items-center ">
+          <div class="row rounder buttoncontainer d-flex justify-content-around align-items-center">
             <!-- Buttoncontainer with contains 3 buttons with col3 each -->
-            <button type="button" class="btn btn-primary btn-lg col-3">Rock</button>
-            <button type="button" class="btn btn-primary btn-lg col-3">Paper</button>
-            <button type="button" class="btn btn-primary btn-lg col-3">Scissor</button>
-            
+            <div class="col-1"></div>
+            <button type="button" class="btn btn-primary btn-lg col-2">Rock</button>
+            <div class="col-2"></div>
+            <button type="button" class="btn btn-primary btn-lg col-2">Paper</button>
+            <div class="col-2"></div>
+            <button type="button" class="btn btn-primary btn-lg col-2">Scissor</button>
+            <div class="col-1"></div>
+
           </div>
 
         </div>

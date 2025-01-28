@@ -2,77 +2,67 @@ body{
     background-color: #f1f1f1;
 }
 header{
-    height: 5vh;
+    height: 2rem;
     width: 100vw;
-    margin-bottom: 5vh;
-    background-color: aquamarine;
-
+    background-color: #b9c5f3;
 }
+a {
+    color: inherit;
+    text-decoration: inherit;
+  }
 .main{
-    height: 80vh;
+    height: calc(100vh - 4rem - 8px);
+    margin-top: 4px;
+    margin-bottom: 4px;
 }
 footer{
-    height: 5vh;
+    height: 2rem;
     width: 100vw;
-    margin-top: 5vh;
-    background-color: blueviolet;
+    background-color: #b9c5f3;
 }
-
-
 .rounder{
     background-color: white;
     border-radius: 0.5rem;
-    border-color: hotpink;
-    border-style:dashed;
+    border-color: #b9c5f3;
+    border-style:solid;
 }
-.gameboard{
-    height: 62vh;
-    margin-bottom: 2vh;
+.gameboard {
     background-color: white;
+    height: 74%;
 }
 .buttoncontainer{
-    height: 16vh;
+    height: 100%;
     background-color: white;
 }
-
+.btn {
+    background-color: #b9c5f3;
+    border-color: #b9c5f3;
+    color: black;
+}
 /* 
 ===================================
    Homepage Style ↓
 =================================== 
 */
 
-.homepage-container{
-    height: 90vh;
-}
-
 .homepage-header {
-    background-color: aquamarine;
-    height: 5vh;
-    width: 100vw;
-    margin: 0;
 }
-
 
 .homepage-article, .homepage-section {
     background-color: white;
     border-radius: 10px;
-    height: 44vh;
+    height:49%;
 }
 
 .homepage-article{
-    margin-bottom: 1vh;
+
 }
 
 .homepage-section{
-    margin-top: 1vh;
 }
 
-
 .homepage-footer {
-    background-color: blueviolet;
-    height: 5vh;
-    width: 100vw;
-    margin: 0;
+
 }
 
 /* We use this to more cleanly split a section in 2 vertical halves */
