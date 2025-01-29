@@ -1,3 +1,10 @@
+
+/* 
+===================================
+   Styles that are general for all files ↓
+=================================== 
+*/
+
 body{
     background-color: #f1f1f1;
 }
@@ -6,10 +13,16 @@ header{
     width: 100vw;
     background-color: #b9c5f3;
 }
+
+/* This line below removes decoration for hyperlinks and such
+*/
 a {
     color: inherit;
     text-decoration: inherit;
   }
+/* The calculation calculates 100% of the screen -the size of the header
+    and footer, and also minus the margins
+*/
 .main{
     height: calc(100vh - 4rem - 8px);
     margin-top: 4px;
@@ -20,12 +33,27 @@ footer{
     width: 100vw;
     background-color: #b9c5f3;
 }
+/* Makes the object that has this class round around the edges, and
+   adds a border.
+*/
 .rounder{
     background-color: white;
     border-radius: 0.5rem;
     border-color: #b9c5f3;
     border-style:solid;
 }
+
+.btn {
+    background-color: #b9c5f3;
+    border-color: #b9c5f3;
+    color: black;
+}
+/* 
+===================================
+   Styles that are exclusive for GameBoard ↓
+=================================== 
+*/
+
 .gameboard {
     background-color: white;
     height: 74%;
@@ -34,19 +62,12 @@ footer{
     height: 100%;
     background-color: white;
 }
-.btn {
-    background-color: #b9c5f3;
-    border-color: #b9c5f3;
-    color: black;
-}
+
 /* 
 ===================================
-   Homepage Style ↓
+   Styles that are exclusive for index/homepage ↓
 =================================== 
 */
-
-.homepage-header {
-}
 
 .homepage-article, .homepage-section {
     background-color: white;
@@ -54,20 +75,9 @@ footer{
     height:49%;
 }
 
-.homepage-article{
-
-}
-
-.homepage-section{
-}
-
-.homepage-footer {
-
-}
-
 /* We use this to more cleanly split a section in 2 vertical halves */
 .homepage-half-section {
-    height: 50%;
+    height: 49%;
     width : 100%;
     flex-direction: column;
 }
