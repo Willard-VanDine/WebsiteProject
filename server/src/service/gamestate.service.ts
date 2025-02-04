@@ -69,9 +69,6 @@ export class GamestateService {
     getGameScore() {
         // I was unsure if sending score exposes risks for data manipulation
         // in typescript like a java object, so I return a copy instead //Oscar
-        return {
-            playerScore: this.state.playerScore,
-            opponentScore: this.state.opponentScore
-        };
+        return JSON.parse(JSON.stringify(this.state));
     }
 }
