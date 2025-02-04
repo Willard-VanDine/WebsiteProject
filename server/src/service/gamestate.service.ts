@@ -66,7 +66,7 @@ export class GamestateService {
     }
 
     // GET current game score. Explosed for the router layer.
-    getGameScore() {
+    getGameScore() : Gamestate {
         // I was unsure if sending score exposes risks for data manipulation
         // in typescript like a java object, so I return a copy instead //Oscar
         return JSON.parse(JSON.stringify(this.state));
