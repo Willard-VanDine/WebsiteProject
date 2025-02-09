@@ -11,7 +11,7 @@ export const gamestateRouter = express.Router();
 
 // ===== GET REQUEST ===== //
 
-gamestateRouter.get("/gameboard", async (
+gamestateRouter.get("/", async (
     req: Request<{}, {}, {}>,
     res: Response<Gamestate | String> // Return gamestate or error string
 ) => {
@@ -26,7 +26,7 @@ gamestateRouter.get("/gameboard", async (
 
 // ===== POST REQUEST ===== //
 
-gamestateRouter.post("/gameboard", async (
+gamestateRouter.post("/", async (
     req: Request<{}, {}, { playerChoice: Choice }>,
     res: Response<number | String>
 ) => {
@@ -34,14 +34,14 @@ gamestateRouter.post("/gameboard", async (
         const choiceFromPlayer = req.body.playerChoice;
 
         // Handle if input is of wrong type.
-        if (choiceFromPlayer !== (Choice.Paper || Choice.Rock || Choice.Scissors)) {
-            res.status(400).send(`Bad POST call to ${req.originalUrl} --- choiceFromPlayer has type ${typeof (choiceFromPlayer)}`);
+        if (![Choice.Paper, Choice.Rock, Choice.Scissors].includes(choiceFromPlayer)) {
+            res.status(400).send(`Bad POST call to ${req.originalUrl} --- choiceFromPlayer has value ${choiceFromPlayer}`);
             return;
         }
 
         // Handle input of correct type, execute action.
         const result = await gamestateService.makeMove(choiceFromPlayer);        
-        res.status(201).send(result);
+        res.status(201).send(`{"result" : ${result}}`);
     } 
     catch (e : any) {
         res.status(500).send(e.message);

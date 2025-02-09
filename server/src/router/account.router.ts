@@ -10,7 +10,7 @@ export const accountRouter = express.Router();
 
 // ===== GET REQUEST ===== //
 
-accountRouter.get("/account", async (
+accountRouter.get("/", async (
     req: Request<{}, {}, {}>,
     res: Response<Account | String>
 ) => {
@@ -25,7 +25,7 @@ accountRouter.get("/account", async (
 
 // ===== POST REQUEST ===== //
 
-accountRouter.post("/account", async (
+accountRouter.post("/", async (
     req: Request<{}, {}, {username : string}>,
     res: Response<String>
 ) => {
