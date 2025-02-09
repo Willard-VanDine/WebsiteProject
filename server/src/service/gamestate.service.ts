@@ -15,7 +15,7 @@ export class GamestateService {
 
     // Starts a new game -> reset the state (POST-request I believe, we request modification of data)
     // Exposed for the router layer so player can request to start a new game
-    startGame() {
+    async startGame() : Promise<void> {
         this.currentGame = {
             playerChoice: null,
             opponentChoice: null
@@ -24,7 +24,7 @@ export class GamestateService {
 
     // Make a move for the player and for the "PC opponent" (POST-request I believe, as above)
     // Exposed for the router layer, so player can play lé Sten Sax Påse :)
-    makeMove(playerChoice: Choice): number {
+    async makeMove(playerChoice: Choice) : Promise<number> {
         this.currentGame.playerChoice = playerChoice;
         this.currentGame.opponentChoice = this.getOpponentChoice();
 
@@ -66,7 +66,7 @@ export class GamestateService {
     }
 
     // GET current game score. Explosed for the router layer.
-    getGameScore() : Gamestate {
+    async getGameScore() : Promise<Gamestate> {
         // I was unsure if sending score exposes risks for data manipulation
         // in typescript like a java object, so I return a copy instead //Oscar
         return JSON.parse(JSON.stringify(this.state));
