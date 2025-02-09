@@ -20,6 +20,9 @@ export class GamestateService {
             playerChoice: null,
             opponentChoice: null
         };
+
+        this.state.playerScore = 0;
+        this.state.opponentScore = 0;
     }
 
     // Make a move for the player and for the "PC opponent" (POST-request I believe, as above)

@@ -41,6 +41,7 @@ gamestateRouter.post("/", async (
 
         // Handle input of correct type, execute action.
         const result = await gamestateService.makeMove(choiceFromPlayer);        
+        // TODO: Make sure the player gets an accountwin/loss if score reaches 5.
         res.status(201).send(`{"result" : ${result}}`);
     } 
     catch (e : any) {
