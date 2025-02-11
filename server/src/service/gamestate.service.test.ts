@@ -101,6 +101,7 @@ test("The user should be able to choose Scissors", async () => {
 test("The User should be able to check the score", async () => {
     // Checks if it returns the correct values at the start, then checks wheter or not it increases the
     // Correct score
+    await gamestateService.startGame();
     expect(await gamestateService.getGameScore()).toStrictEqual(({playerScore: 0, opponentScore: 0}));
 
     jest.spyOn(gamestateService as any, 'getOpponentChoice').mockReturnValue(Choice.Scissors);

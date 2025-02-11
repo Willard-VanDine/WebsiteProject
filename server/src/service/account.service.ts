@@ -16,6 +16,8 @@ export class AccountService {
         this.acc.accountLosses = 0;
     }
     
+
+    // TODO: We need to reconstruct this!.
     // Update account wins and losses after a game
     // Can maybe take input 1 for win, -1 for loss
     // to follow structure from gamestate service class, 0 should not be neccesary as we only call the method when it is 1 or -1

@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import { GamestateService } from "../service/gamestate.service";
 import { Gamestate } from "../model/gamestate.interface";
 import { Choice } from "../model/choices.enum";
-
+import { Result } from "../model/result.interface";
 // Initialize gamestate service and router
 const gamestateService = new GamestateService();
 export const gamestateRouter = express.Router();
@@ -10,7 +10,7 @@ export const gamestateRouter = express.Router();
 // Initialize router paths:
 
 // ===== GET REQUEST ===== //
-
+//TODO fix all the res send messages.
 gamestateRouter.get("/", async (
     req: Request<{}, {}, {}>,
     res: Response<Gamestate | String> // Return gamestate or error string
@@ -28,7 +28,7 @@ gamestateRouter.get("/", async (
 
 gamestateRouter.post("/", async (
     req: Request<{}, {}, { playerChoice: Choice }>,
-    res: Response<number | String>
+    res: Response<Result | String>
 ) => {
     try {
         const choiceFromPlayer = req.body.playerChoice;
@@ -42,7 +42,8 @@ gamestateRouter.post("/", async (
         // Handle input of correct type, execute action.
         const result = await gamestateService.makeMove(choiceFromPlayer);        
         // TODO: Make sure the player gets an accountwin/loss if score reaches 5.
-        res.status(201).send(`{"result" : ${result}}`);
+        const r : Result = {result: result};
+        res.status(201).send(r);
     } 
     catch (e : any) {
         res.status(500).send(e.message);

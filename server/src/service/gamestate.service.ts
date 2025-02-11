@@ -3,8 +3,8 @@ import { Choice } from "../model/choices.enum";
 
 export class GamestateService {
     private state: Gamestate = {
-        playerScore: 0,
-        opponentScore: 0
+        playerScore: NaN,
+        opponentScore: NaN
     };
 
     // Represent an ongoing game, start "fresh" with no choices made yet.
@@ -15,6 +15,7 @@ export class GamestateService {
 
     // Starts a new game -> reset the state (POST-request I believe, we request modification of data)
     // Exposed for the router layer so player can request to start a new game
+    // should maybe return GameState, as we could use a get request for tomorrow, 
     async startGame() : Promise<void> {
         this.currentGame = {
             playerChoice: null,
@@ -24,7 +25,7 @@ export class GamestateService {
         this.state.playerScore = 0;
         this.state.opponentScore = 0;
     }
-
+    
     // Make a move for the player and for the "PC opponent" (POST-request I believe, as above)
     // Exposed for the router layer, so player can play lé Sten Sax Påse :)
     async makeMove(playerChoice: Choice) : Promise<number> {
@@ -72,6 +73,11 @@ export class GamestateService {
     async getGameScore() : Promise<Gamestate> {
         // I was unsure if sending score exposes risks for data manipulation
         // in typescript like a java object, so I return a copy instead //Oscar
-        return JSON.parse(JSON.stringify(this.state));
+    
+        if (Object.values(this.state).every(value => Number.isNaN(value))) {
+            throw new Error("Both fields in the state are NaN.");
+        } else {
+            return JSON.parse(JSON.stringify(this.state));
+        }
     }
 }
