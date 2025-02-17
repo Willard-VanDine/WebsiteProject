@@ -1,11 +1,30 @@
 import React from 'react';
 
+
+// style={{height: "calc(100vh - 4rem - 8px)"}}
 const HomePage = () => {
   return (
-    <div>
-      <h1>Home Page</h1>
-      <p>Welcome to the homepage!</p>
-      {/* Home page content here */}
+    // container class ensures consistency between pages 
+    <div className="container d-flex flex-column justify-content-between" style={{height: "calc(100vh - 4rem - 8px)"}}>
+        
+        <article className="homepage-article rounder">
+            <p className = "text-center">
+                This is the homepage for the first lab assigment
+            </p>
+        </article>
+      
+        <section className="homepage-section rounder d-flex flex-column justify-content-between align-items-center">
+      
+            <div className="homepage-half-section d-flex align-items-center justify-content-center">
+                <h6 className="text-center">Rules of the game:</h6>
+                <p className="text-center">...</p>
+            </div>
+            <div className="homepage-half-section d-flex align-items-center justify-content-center">
+                <a href="gameboard.html">
+                    <button type="button" className="btn btn-primary btn-lg">Start playing!</button>
+                </a>
+            </div>
+        </section>
     </div>
   );
 };

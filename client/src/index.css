@@ -1,3 +1,4 @@
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -23,9 +24,15 @@ header{
   height: calc(100vh - 4rem - 8px);
   margin-top: 4px;
   margin-bottom: 4px;
-  display: flex;
-  flex-direction: row;
+
 }
+
+.Container {
+  height: 100%;
+}
+
+
+
 footer{
   height: 2rem;
   width: 100vw;
@@ -44,8 +51,6 @@ body {
   margin: 0;
   display: flex;
   place-items: center;
-  height: 100vh;
-  width: 100vw;
   min-width: 320px;
   min-height: 100vh;
   background-color: #f1f1f1;
@@ -56,13 +61,11 @@ h1 {
   line-height: 1.1;
 }
 aside{
-  background-color: red;
+  background-color: transparent;
   width: 15%;
+  height: 100%;
 }
-.Container{
-  background-color: blue;
-  width: 85%;
-}
+
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -93,4 +96,89 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+
+
+/* 
+===================================
+   Styles that are general for all files ↓
+=================================== 
+*/
+
+body{
+  background-color: #f1f1f1;
+}
+header{
+  height: 2rem;
+  width: 100vw;
+  background-color: #b9c5f3;
+}
+
+/* This line below removes decoration for hyperlinks and such
+*/
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+/* The calculation calculates 100% of the screen -the size of the header
+  and footer, and also minus the margins
+*/
+.main{
+  height: calc(100vh - 4rem - 8px);
+  margin-top: 4px;
+  margin-bottom: 4    px;
+}
+footer{
+  height: 2rem;
+  width: 100vw;
+  background-color: #b9c5f3;
+}
+/* Makes the object that has this class round around the edges, and
+ adds a border.
+*/
+.rounder{
+  background-color: white;
+  border-radius: 0.5rem;
+  border-color: #b9c5f3;
+  border-style:solid;
+}
+
+.btn {
+  background-color: #b9c5f3;
+  border-color: #b9c5f3;
+  color: black;
+}
+/* 
+===================================
+ Styles that are exclusive for GameBoard ↓
+=================================== 
+*/
+
+.gameboard {
+  background-color: white;
+  height: 74%;
+}
+.buttoncontainer{
+  height: 100%;
+  background-color: white;
+}
+
+/* 
+===================================
+ Styles that are exclusive for index/homepage ↓
+=================================== 
+*/
+
+.homepage-article, .homepage-section {
+  background-color: white;
+  border-radius: 10px;
+  height:49%;
+}
+
+/* We use this to more cleanly split a section in 2 vertical halves */
+.homepage-half-section {
+  height: 49%;
+  width : 100%;
+  flex-direction: column;
 }
