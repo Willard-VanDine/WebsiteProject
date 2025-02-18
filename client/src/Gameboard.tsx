@@ -5,7 +5,6 @@ import Stack from 'react-bootstrap/esm/Stack';
 //import Container from 'react-bootstrap/Container';
 //import Row from 'react-bootstrap/Row';
 //import Col from 'react-bootstrap/Col';
-import './main.css';
 
 const GameBoard = () => {
   return (
@@ -18,7 +17,7 @@ const GameBoard = () => {
           <div className="row rounder buttoncontainer d-flex justify-content-around align-items-center">
             <div className="col-1"></div> 
 
-            <button type="button" className="btn btn-primarye btn-lg col-2">Rock</button>
+            <button type="button" className="btn btn-primary btn-lg col-2">Rock</button>
             <div className="col-2"></div>
 
             <button type="button" className="btn btn-primary btn-lg col-2">Paper</button>
