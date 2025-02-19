@@ -1,4 +1,5 @@
 import React from 'react';
+import { startGame } from './api';
 
 
 // style={{height: "calc(100vh - 4rem - 8px)"}}
@@ -21,7 +22,12 @@ const HomePage = () => {
             </div>
             <div className="homepage-half-section d-flex align-items-center justify-content-center">
                 <a href="gameboard.html">
-                    <button type="button" className="btn btn-primary btn-lg">Start playing!</button>
+
+                    {/* Start Playing button */}
+                    <button type="button" className="btn btn-primary btn-lg" onClick={ async () => {
+                        await startGame();
+                    }}>Start playing!</button>
+
                 </a>
             </div>
         </section>

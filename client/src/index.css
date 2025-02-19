@@ -158,10 +158,35 @@ footer{
 .gameboard {
   background-color: white;
   height: 74%;
+  display: flex;
+  flex-direction: column;
 }
 .buttoncontainer{
   height: 100%;
   background-color: white;
+}
+
+.scorecontainer{
+  display: flex;  
+  align-items: baseline ;     
+  justify-content: space-between;  
+  width: 100%;    
+  font-size: 1.5rem;
+  padding-left: 2%;
+  padding-right: 2%;
+  flex-wrap: wrap;
+}
+
+.choicecontainer{
+  display: flex;  
+  align-items: center ;     
+  justify-content: space-between;  
+  width: 100%;    
+  font-size: 3rem;
+  padding-left: 15%;
+  padding-right: 15%;
+  flex: 1;
+  flex-wrap: wrap;
 }
 
 /* 
