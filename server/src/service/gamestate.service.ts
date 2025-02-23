@@ -1,39 +1,57 @@
 import { Gamestate } from "../model/gamestate.interface";
 import { Choice } from "../model/choices.enum";
+import { AccountService } from "./account.service";
+import { Account } from "../model/account.interface";
 
 export class GamestateService {
-    private state: Gamestate = {
-        playerScore: NaN,
-        opponentScore: NaN
-    };
+    private accountService: AccountService;
+    
 
     // Represent an ongoing game, start "fresh" with no choices made yet.
     private currentGame: { playerChoice: Choice | null, opponentChoice: Choice | null } = {
         playerChoice: null,
         opponentChoice: null
     };
-
+    constructor(accountService: AccountService){
+        this.accountService = accountService;
+    }
     // Starts a new game -> reset the state (POST-request I believe, we request modification of data)
     // Exposed for the router layer so player can request to start a new game
     // should maybe return GameState, as we could use a get request for tomorrow, 
-    async startGame() : Promise<void> {
+    async startGame(username:string) : Promise<void|undefined> {
+        const user : Account | undefined = await this.accountService.findAccount(username);
+        if (user === undefined) {
+            return undefined
+        }
         this.currentGame = {
             playerChoice: null,
             opponentChoice: null
         };
 
-        this.state.playerScore = 0;
-        this.state.opponentScore = 0;
+        user.gamestate ={
+            playerScore: 0,
+            opponentScore: 0            
+        };
     }
     
     // Make a move for the player and for the "PC opponent" (POST-request I believe, as above)
     // Exposed for the router layer, so player can play lé Sten Sax Påse :)
-    async makeMove(playerChoice: Choice) : Promise<number> {
+    async makeMove(username: string, playerChoice: Choice): Promise<number | undefined> {
+        const user: Account | undefined = await this.accountService.findAccount(username);
+        if (user === undefined) {
+            return undefined;
+        }
+    
+        // Proceed with the move and determine winner
         this.currentGame.playerChoice = playerChoice;
         this.currentGame.opponentChoice = this.getOpponentChoice();
-
-        return this.determineWinner();
+        const result = this.determineWinner(user);
+    
+       
+    
+        return result;
     }
+    
 
     // Helper method to randomly generate a choice for the opponent
     private getOpponentChoice(): Choice {
@@ -49,7 +67,7 @@ export class GamestateService {
     // Returns  1 if player scored
     // Returns  0 if it's a draw
     // Returns -1 if opponent scored
-    private determineWinner(): number {
+    private determineWinner(user:Account): number {
         const { playerChoice, opponentChoice } = this.currentGame;
 
         if (playerChoice === opponentChoice) {
@@ -60,24 +78,27 @@ export class GamestateService {
         if ((playerChoice === Choice.Rock && opponentChoice === Choice.Scissors) ||
             (playerChoice === Choice.Paper && opponentChoice === Choice.Rock) ||
             (playerChoice === Choice.Scissors && opponentChoice === Choice.Paper)) {
-            this.state.playerScore++;
+            user.gamestate.playerScore++;
             return 1;
         }
 
         // If it's not draw & player didn't score -> opponent scored
-        this.state.opponentScore++;
+        user.gamestate.opponentScore++;
         return -1; // PC wins
     }
 
     // GET current game score. Explosed for the router layer.
-    async getGameScore() : Promise<Gamestate> {
+    async getGameScore(username:string) : Promise<Gamestate| undefined> {
         // I was unsure if sending score exposes risks for data manipulation
         // in typescript like a java object, so I return a copy instead //Oscar
-    
-        if (Object.values(this.state).every(value => Number.isNaN(value))) {
+        const user : Account | undefined = await this.accountService.findAccount(username);
+        if (user === undefined) {
+            return undefined
+        }
+        if (Object.values(user.gamestate).every(value => Number.isNaN(value))) {
             throw new Error("Both fields in the state are NaN.");
         } else {
-            return JSON.parse(JSON.stringify(this.state));
+            return JSON.parse(JSON.stringify(user.gamestate));
         }
     }
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 
 
@@ -12,21 +12,14 @@ interface SidenavProps {
 const Sidenav  = () => {
   return (
     // container class ensures consistency between pages 
-    <aside className ="container rounder " style={{height: "calc(100vh - 4rem - 8px)"}} >
-      <ul>
-        <li>
-          <Link to="/">Homepage</Link>
-        </li>
-        <li>
-          <Link to="/gameboard">Gameboard</Link>
-        </li>
-        <li>
-          <Link to="/login">Log in</Link>
-        </li>
-        <li>
-          <Link to="/register">Register</Link>
-        </li>
-      </ul>
+    <aside className ="container rounder " style={{height: "calc(100vh - 4rem - 8px)", display: "inline-flex", 
+      flexDirection: "column"} } >
+      
+          <NavLink to="/" end>Homepage</NavLink>
+          <NavLink to="/gameboard" end>Gameboard</NavLink>
+          <NavLink to="/login" end>Log in</NavLink>        
+          <NavLink to="/register" end>Register new user</NavLink>
+    
     </aside>
   );
 };

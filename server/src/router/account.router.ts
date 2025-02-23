@@ -1,46 +1,32 @@
-import express, { Request, Response } from "express";
+import express, { Request, Response, Router } from "express";
 import { AccountService } from "../service/account.service";
 import { Account } from "../model/account.interface";
 
-// Initialize gamestate service and router
-const accountService = new AccountService();
-export const accountRouter = express.Router();
+export function accountRouter(accountService: AccountService): Router {
+    const accountRouter = express.Router();
 
-// Initialize router paths:
-
-// ===== GET REQUEST ===== //
-
-accountRouter.get("/", async (
-    req: Request<{}, {}, {}>,
-    res: Response<Account | String>
-) => {
-    try{
-        const result : Account = await accountService.getAccount();
-        res.status(200).send(result);
+    interface AccountRequest extends Request {
+        body: { username: string, password: string },
+        session: any
     }
-    catch(e : any){
-        res.status(500).send(e.message);
-    }
-});
 
-// ===== POST REQUEST ===== //
+    accountRouter.post("/", async (req: AccountRequest, res: Response) => {
+        await accountService.registerAccount(req.body.username, req.body.password);
+        res.status(201).send({username: req.body.username});
+    })
 
-accountRouter.post("/", async (
-    req: Request<{}, {}, {username : string}>,
-    res: Response<String>
-) => {
-    try{
-        const username = req.body.username;
-
-        if(typeof(username) !== "string"){
-            res.status(400).send(`Bad POST call to ${req.originalUrl} --- username has type ${typeof (username)}`);
+    accountRouter.post("/login", async (req: AccountRequest, res: Response) => {
+        const user: Account | undefined = await accountService.findAccount(req.body.username, req.body.password);
+        if (user === undefined) {
+            res.status(401).send("No such username or password");
+            console.log("No such User exist")
             return;
         }
+        
+        req.session.username = req.body.username; // Login
+        console.log("Logged in!")
+        res.status(200).send("Logged in");
+    })
 
-        await accountService.registerAccount(username);
-        res.status(200).send(`{"success" : true}`);
-    }
-    catch(e : any){
-        res.status(500).send(e.message);
-    }
-});
+    return accountRouter;
+}

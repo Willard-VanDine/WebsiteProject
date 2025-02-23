@@ -1,38 +1,33 @@
-import React from 'react';
-import { startGame } from './api';
+import { useState } from "react";
+import { NavLink, useNavigate } from "react-router";
+import { registerUser } from "./api";
 
+export default function RegisterScreen() {
+    const [username, setUsername] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+    const navigate = useNavigate();
 
-// style={{height: "calc(100vh - 4rem - 8px)"}}
-const Register = () => {
-  return (
-    // container class ensures consistency between pages 
-    <div className="container d-flex flex-column justify-content-between" style={{height: "calc(100vh - 4rem - 8px)"}}>
-        
-        <article className="homepage-article rounder">
-            <p className = "text-center">
-                This is test to test router, so Register page in page here
+    return (
+        <section>
+            <h1>Register New User</h1>
+            <p>
+                <label htmlFor="username">Username</label>
+                <input type="text" id="username" onChange={(e) => {
+                    setUsername(e.target.value);
+                }}></input>
             </p>
-        </article>
-      
-        <section className="homepage-section rounder d-flex flex-column justify-content-between align-items-center">
-      
-            <div className="homepage-half-section d-flex align-items-center justify-content-center">
-                <h6 className="text-center">Register</h6>
-                <p className="text-center">...</p>
-            </div>
-            <div className="homepage-half-section d-flex align-items-center justify-content-center">
-                <a href="gameboard.html">
-
-                    {/* Start Playing button */}
-                    <button type="button" className="btn btn-primary btn-lg" onClick={ async () => {
-                        await startGame();
-                    }}>Start playing!</button>
-
-                </a>
-            </div>
+            <p>
+                <label htmlFor="password">Password</label>
+                <input type="password" id="password" onChange={(e) => {
+                    setPassword(e.target.value);
+                }}></input>
+            </p>
+            <p><button onClick={async () => {
+                await registerUser(username, password);
+                navigate("/");
+            }}>Register </button></p>
+            <NavLink to="/" end>Back to login screen</NavLink>
         </section>
-    </div>
-  );
-};
+    )
 
-export default Register;
+}
