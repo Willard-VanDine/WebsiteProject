@@ -63,7 +63,7 @@ gamestateRouter.post("/", async (
         const result: number | undefined = await gamestateService.makeMove(req.session.username,choiceFromPlayer); 
         if (result === undefined) {
             console.log("User logged in as 22222 " + req.session.username + " no longer exists");
-            //delete req.session.username;
+            delete req.session.username;
             res.status(401).send("Not logged in");
             return;
         }       

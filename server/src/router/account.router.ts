@@ -1,10 +1,15 @@
 import express, { Request, Response, Router } from "express";
 import { AccountService } from "../service/account.service";
 import { Account } from "../model/account.interface";
+import { LoggedIn } from "../model/loggedin.interface";
 
 export function accountRouter(accountService: AccountService): Router {
     const accountRouter = express.Router();
 
+
+    interface AccountRequest{
+        session:any
+    }
     interface CreateAccountRequest extends Request {
         body: { username: string, password: string },
         session: any
@@ -14,7 +19,14 @@ export function accountRouter(accountService: AccountService): Router {
 
 
     //get request for checking the session
-    accountRouter.get("/check-session", )
+    accountRouter.get("/check-session", async (req: AccountRequest, res: Response<LoggedIn>)=>{
+        if(req.session.username){
+            res.status(200).send({loggedIn:true});
+        }else{
+            res.status(401).send({loggedIn:false});
+        }
+
+    })
     accountRouter.post("/", async (req: CreateAccountRequest, res: Response) => {
         await accountService.registerAccount(req.body.username, req.body.password);
         res.status(201).send({username: req.body.username});

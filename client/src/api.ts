@@ -2,6 +2,7 @@ import axios from "axios";
 import { Result } from "../../server/src/model/result.interface";
 import { Choice } from "../../server/src/model/choices.enum";
 import { Gamestate } from "../../server/src/model/gamestate.interface";
+import {LoggedIn} from "../../server/src/model/loggedin.interface";
 
 axios.defaults.withCredentials = true;
 const BASE_URL = "http://localhost:8080";
@@ -16,7 +17,7 @@ export async function makeMove(playerChoice : Choice) : Promise<Result | undefin
         return undefined;
     }
 }
-
+//TODO: add so that we actually check the different status codes, such as 401, 200 etc
 export async function getGameScore() : Promise<Gamestate | undefined> {
     try{
         const response = await axios.get<Gamestate>(`${BASE_URL}/gameboard`);
@@ -52,5 +53,15 @@ export async function registerUser(username: string, password: string) : Promise
         return;
     }   catch(e:any){
             console.log(e);
+    }
+  }
+  export async function checkSession() : Promise<LoggedIn| undefined> {
+    try{
+        const response = await axios.get<LoggedIn>(`${BASE_URL}/account/check-session`);
+        return response.data;
+
+    }catch(e:any){
+        return undefined;
+        console.log(e);
     }
   }
