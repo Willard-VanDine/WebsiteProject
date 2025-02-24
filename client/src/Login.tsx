@@ -8,8 +8,8 @@ export default function LoginScreen() {
     const navigate = useNavigate();
     
     return (
-        <section>
-            <h1>To Do Lists Done Right</h1>
+        <section className="heightFixer centerObjects rounder">
+            <h1>Login Page</h1>
                 <p>
                 <label htmlFor="username">Username</label>
                 <input type="text" id="username" onChange={(e) => {

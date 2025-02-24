@@ -8,7 +8,7 @@ export default function RegisterScreen() {
     const navigate = useNavigate();
 
     return (
-        <section>
+        <section className="heightFixer rounder centerObjects">
             <h1>Register New User</h1>
             <p>
                 <label htmlFor="username">Username</label>
