@@ -8,7 +8,7 @@ export function useAuth() {
   useEffect(() => {
     const verifySession = async () => {
       const sessionStatus = await checkSession();
-      if (sessionStatus) {
+      if (sessionStatus?.loggedIn) {
         setIsLoggedIn(sessionStatus.loggedIn);
       } else {
         setIsLoggedIn(false);
