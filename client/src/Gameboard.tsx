@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Choice } from "../../server/src/model/choices.enum";
 import { Gamestate } from "../../server/src/model/gamestate.interface"
-import { getGameScore, makeMove, startGame } from './api';
+import { getGameScore, makeMove } from './api';
 import { Result } from '../../server/src/model/result.interface';
 //import Container from 'react-bootstrap/Container';
 //import Row from 'react-bootstrap/Row';
@@ -24,8 +24,8 @@ const GameBoard = () => { // TODO: MAKE THIS PAGE SHOW CURRENT GAME SCORE. MAKE 
 
           {/* Choice visual area */}
           <div className="choicecontainer">
-            <p id="PlayerVisual">Player</p>
-            <p id="OpponentVisual">Opponent</p>
+            <p id="PlayerVisual" data-testid="PlayerVisual">Player</p>
+            <p id="OpponentVisual" data-testid="OpponentVisual">Opponent</p>
           </div>
         </div>
 
