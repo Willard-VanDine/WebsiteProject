@@ -27,6 +27,15 @@ export function accountRouter(accountService: AccountService): Router {
         }
 
     })
+    accountRouter.get("/logOut", async (req: AccountRequest, res: Response<void>)=>{
+        if(req.session.username){
+            delete req.session.username;
+            res.status(200).send();
+        }else{
+            res.status(401).send();
+        }
+
+    })
     accountRouter.post("/", async (req: CreateAccountRequest, res: Response) => {
         await accountService.registerAccount(req.body.username, req.body.password);
         res.status(201).send({username: req.body.username});

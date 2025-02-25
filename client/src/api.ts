@@ -71,3 +71,13 @@ export async function registerUser(username: string, password: string) : Promise
         
     }
   }
+  export async function logOut() : Promise<void> {
+    try{
+        await axios.get<void>(`${BASE_URL}/account/logOut`);
+        return;
+
+    }catch(e:any){
+        console.log(e);
+        
+    }
+  }

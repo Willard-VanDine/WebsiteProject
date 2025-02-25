@@ -21,7 +21,7 @@ const Content = () => {
       <div className='container'>
         <div className="row">
           <div className="col-2">
-            <Sidenav isLoggedIn={isLoggedIn}/>
+            <Sidenav isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>
           </div>
           <div className='col-10'>
           <Container>
