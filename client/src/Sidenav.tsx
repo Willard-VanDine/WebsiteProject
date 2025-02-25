@@ -32,7 +32,7 @@ const Sidenav = ({isLoggedIn, setIsLoggedIn} : SidenavProps) => {
           {isLoggedIn ? (
             <>
             <NavLink to="/gameboard" end>Gameboard</NavLink>
-            <NavLink to="/Account" end>Account</NavLink>
+            <NavLink to="/account" end>Account</NavLink>
             <p><button onClick={LogoutButton}>Log Out</button></p>
             </>
           ) : (

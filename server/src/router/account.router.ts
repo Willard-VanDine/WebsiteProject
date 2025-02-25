@@ -15,7 +15,16 @@ export function accountRouter(accountService: AccountService): Router {
         session: any
     }
     //get account
-    accountRouter.get("/")
+    accountRouter.get("/getAccount", async (req: AccountRequest, res: Response<Account|String>)=>{
+       const account:Account | undefined = await accountService.findAccount(req.session.username);
+       
+        if(req.session.username){
+            res.status(200).send(account);
+        }else{
+            res.status(401).send("Did not work");
+        }
+
+    })
 
 
     //get request for checking the session
