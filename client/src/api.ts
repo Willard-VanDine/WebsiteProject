@@ -47,12 +47,17 @@ export async function registerUser(username: string, password: string) : Promise
     }
   }
   
-  export async function login(username: string, password: string) : Promise<void> {
+  export async function login(username: string, password: string) : Promise<boolean|undefined> {
     try {
-        await axios.post(`${BASE_URL}/account/login`, {username: username, password: password});
-        return;
+       const response = await axios.post(`${BASE_URL}/account/login`, {username: username, password: password});
+        if(response.status == 200)
+            return true;
+        else 
+            return false;
+
     }   catch(e:any){
             console.log(e);
+            return undefined;
     }
   }
   export async function checkSession() : Promise<LoggedIn| undefined> {
@@ -61,7 +66,8 @@ export async function registerUser(username: string, password: string) : Promise
         return response.data;
 
     }catch(e:any){
-        return undefined;
         console.log(e);
+        return undefined;
+        
     }
   }

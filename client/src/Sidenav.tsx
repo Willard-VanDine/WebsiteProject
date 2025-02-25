@@ -5,14 +5,12 @@ import { useAuth } from './useAuth';
 
 
 
-
+interface SidenavProps {
+  isLoggedIn: boolean | null;
+}
 
 // style={{height: "calc(100vh - 4rem - 8px)"}}
-const Sidenav  = () => {
-  const { isLoggedIn, loading } = useAuth();
-  if (loading) {
-    return <div>Loading...</div>; // Show loading until session check is done
-  }
+const Sidenav = ({isLoggedIn} : SidenavProps) => {
   return (
     // container class ensures consistency between pages 
     <aside className ="container rounder " style={{height: "calc(100vh - 4rem - 8px)", display: "inline-flex", 
