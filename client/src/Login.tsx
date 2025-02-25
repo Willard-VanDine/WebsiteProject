@@ -6,7 +6,7 @@ import { useAuth } from "./useAuth";
 
 interface LoginProps {
     isLoggedIn: boolean | null;
-    setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean|null>>;
   }
 
 export default function LoginScreen({ isLoggedIn, setIsLoggedIn }: LoginProps) {

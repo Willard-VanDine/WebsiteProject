@@ -10,9 +10,11 @@ import { useAuth } from './useAuth';
 
 
 
+
 const Content = () => {
 
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+  const {isLoggedIn, setIsLoggedIn} = useAuth();
+
 
   return (
     <div className="Content mt-1 mb-1" >
