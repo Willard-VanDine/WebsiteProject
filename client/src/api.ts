@@ -3,6 +3,7 @@ import { Result } from "../../server/src/model/result.interface";
 import { Choice } from "../../server/src/model/choices.enum";
 import { Gamestate } from "../../server/src/model/gamestate.interface";
 import {LoggedIn} from "../../server/src/model/loggedin.interface";
+import {Account} from "../../server/src/model/account.interface";
 
 axios.defaults.withCredentials = true;
 const BASE_URL = "http://localhost:8080";
@@ -47,13 +48,13 @@ export async function registerUser(username: string, password: string) : Promise
     }
   }
   
-  export async function login(username: string, password: string) : Promise<boolean|undefined> {
+  export async function login(username: string, password: string) : Promise<LoggedIn|undefined> {
     try {
        const response = await axios.post(`${BASE_URL}/account/login`, {username: username, password: password});
         if(response.status == 200)
-            return true;
+            return {loggedIn :true};
         else 
-            return false;
+            return {loggedIn :false};;
 
     }   catch(e:any){
             console.log(e);
@@ -71,3 +72,23 @@ export async function registerUser(username: string, password: string) : Promise
         
     }
   }
+  export async function logOut() : Promise<void> {
+    try{
+        await axios.get<void>(`${BASE_URL}/account/logOut`);
+        return;
+
+    }catch(e:any){
+        console.log(e);
+        
+    }
+  }
+
+  export async function getAccount() : Promise<Account | undefined> {
+    try{
+        const response = await axios.get<Account>(`${BASE_URL}/account/getAccount`);
+        return response.data;
+    }
+    catch(e : any){
+        return undefined;
+    }
+}

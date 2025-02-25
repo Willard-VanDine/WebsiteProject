@@ -7,6 +7,7 @@ import Gameboard from './Gameboard';
 import Login from './Login';
 import Register from './Register';
 import { useAuth } from './useAuth';
+import AccountPage from './AccountPage';
 
 
 
@@ -21,7 +22,7 @@ const Content = () => {
       <div className='container'>
         <div className="row">
           <div className="col-2">
-            <Sidenav isLoggedIn={isLoggedIn}/>
+            <Sidenav isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>
           </div>
           <div className='col-10'>
           <Container>
@@ -30,6 +31,7 @@ const Content = () => {
               <Route path="/gameboard" element={<Gameboard />} />
               <Route path="/login" element={<Login isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/account" element={<AccountPage />} />
             </Routes>
           </Container>
           </div>

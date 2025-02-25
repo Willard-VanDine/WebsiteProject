@@ -18,7 +18,7 @@ export default function LoginScreen({ isLoggedIn, setIsLoggedIn }: LoginProps) {
         // Call the login function to authenticate the user
         const success = await login(username, password);
 
-        if (success) {
+        if (success?.loggedIn) {
             // If login is successful, update the authentication state
             setIsLoggedIn(true);  // Update state to reflect the logged-in status
             navigate("/"); // Redirect to the homepage or a different page after login
