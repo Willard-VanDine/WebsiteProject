@@ -47,13 +47,13 @@ export async function registerUser(username: string, password: string) : Promise
     }
   }
   
-  export async function login(username: string, password: string) : Promise<boolean|undefined> {
+  export async function login(username: string, password: string) : Promise<LoggedIn|undefined> {
     try {
        const response = await axios.post(`${BASE_URL}/account/login`, {username: username, password: password});
         if(response.status == 200)
-            return true;
+            return {loggedIn :true};
         else 
-            return false;
+            return {loggedIn :false};;
 
     }   catch(e:any){
             console.log(e);
