@@ -28,10 +28,10 @@ const Content = () => {
           <Container>
             <Routes>
               <Route path="/" element={<Homepage />} />
-              <Route path="/gameboard" element={<Gameboard />} />
+              <Route path="/gameboard" element={<Gameboard isLoggedIn={isLoggedIn}  />} />
               <Route path="/login" element={<Login isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/account" element={<AccountPage />} />
+              <Route path="/account" element={<AccountPage isLoggedIn={isLoggedIn} /> } />
             </Routes>
           </Container>
           </div>
