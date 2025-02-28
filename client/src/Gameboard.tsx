@@ -44,136 +44,22 @@ const GameBoard = ({ isLoggedIn }: GameBoardProps) => {
             <div className="row rounder buttoncontainer d-flex justify-content-around align-items-center">
               <div className="col-1"></div>
 
-              {/* Rock Button */}
-              <button type="button" className="btn btn-primary btn-lg col-2" onClick={async () => {
-                const rock: Choice = Choice.Rock;
-                const result: Result | undefined = await makeMove(rock);
-                if (result === undefined) {
-                  console.log("Result undefined after choosing Rock");
-                  return;
-                }
+              {/* 
+              Rock, Paper, Scissor Buttons: 
+              Object.values(Choice) returns an array of the values of the enum Choice.
+              for each, a button is created with the value as text and the handleChoice function as onClick.
+              */}
+              
+              {Object.values(Choice).map(choice => (
+                <button 
+                  key={choice} 
+                  type="button" 
+                  className="btn btn-primary btn-lg col-2" 
+                  onClick={() => handleChoice(choice)}>
+                  {choice}
+                </button>
+              ))}
 
-                const gameroundResultText = document.getElementById("GameroundResultText");
-                const playerVisual = document.getElementById("PlayerVisual");
-                const opponentVisual = document.getElementById("OpponentVisual");
-                if (gameroundResultText !== null && playerVisual !== null && opponentVisual !== null) {
-                  if (result.result === 1) {
-                    gameroundResultText.innerHTML = "You Win!";
-                    playerVisual.innerHTML = "Rock";
-                    opponentVisual.innerHTML = "Scissor";
-                  }
-                  else if (result.result === 0) {
-                    gameroundResultText.innerHTML = "Draw!";
-                    playerVisual.innerHTML = "Rock";
-                    opponentVisual.innerHTML = "Rock";
-                  }
-                  else if (result.result === -1) {
-                    gameroundResultText.innerHTML = "You Lose!";
-                    playerVisual.innerHTML = "Rock";
-                    opponentVisual.innerHTML = "Paper";
-                  }
-                }
-
-                const newScores: Gamestate | undefined = await getGameScore();
-                if (newScores === undefined) {
-                  console.log("Gamestate is undefined when getting score");
-                  return;
-                }
-                const playerScore: HTMLElement | null = document.getElementById("PlayerScore");
-                const opponentScore: HTMLElement | null = document.getElementById("OpponentScore");
-                if (playerScore !== null && opponentScore !== null) {
-                  playerScore.innerHTML = `Player score: ${newScores.playerScore}`;
-                  opponentScore.innerHTML = `Opponent score: ${newScores.opponentScore}`;
-                }
-              }}>Rock</button>
-              <div className="col-2"></div>
-
-              {/* Paper Button */}
-              <button type="button" className="btn btn-primary btn-lg col-2" onClick={async () => {
-                const paper: Choice = Choice.Paper;
-                const result: Result | undefined = await makeMove(paper);
-                if (result === undefined) {
-                  console.log("Result undefined after choosing Paper");
-                  return;
-                }
-
-                const gameroundResultText = document.getElementById("GameroundResultText");
-                const playerVisual = document.getElementById("PlayerVisual");
-                const opponentVisual = document.getElementById("OpponentVisual");
-                if (gameroundResultText !== null && playerVisual !== null && opponentVisual !== null) {
-                  if (result.result === 1) {
-                    gameroundResultText.innerHTML = "You Win!";
-                    playerVisual.innerHTML = "Paper";
-                    opponentVisual.innerHTML = "Rock";
-                  }
-                  else if (result.result === 0) {
-                    gameroundResultText.innerHTML = "Draw!";
-                    playerVisual.innerHTML = "Paper";
-                    opponentVisual.innerHTML = "Paper";
-                  }
-                  else if (result.result === -1) {
-                    gameroundResultText.innerHTML = "You Lose!";
-                    playerVisual.innerHTML = "Paper";
-                    opponentVisual.innerHTML = "Scissor";
-                  }
-                }
-
-                const newScores: Gamestate | undefined = await getGameScore();
-                if (newScores === undefined) {
-                  console.log("Gamestate is undefined when getting score");
-                  return;
-                }
-                const playerScore: HTMLElement | null = document.getElementById("PlayerScore");
-                const opponentScore: HTMLElement | null = document.getElementById("OpponentScore");
-                if (playerScore !== null && opponentScore !== null) {
-                  playerScore.innerHTML = `Player score: ${newScores.playerScore}`;
-                  opponentScore.innerHTML = `Opponent score: ${newScores.opponentScore}`;
-                }
-              }}>Paper</button>
-              <div className="col-2"></div>
-
-              {/* Scissor Button */}
-              <button type="button" className="btn btn-primary btn-lg col-2" onClick={async () => {
-                const scissor: Choice = Choice.Scissors;
-                const result: Result | undefined = await makeMove(scissor);
-                if (result === undefined) {
-                  console.log("Result undefined after choosing Scissor");
-                  return;
-                }
-
-                const gameroundResultText = document.getElementById("GameroundResultText");
-                const playerVisual = document.getElementById("PlayerVisual");
-                const opponentVisual = document.getElementById("OpponentVisual");
-                if (gameroundResultText !== null && playerVisual !== null && opponentVisual !== null) {
-                  if (result.result === 1) {
-                    gameroundResultText.innerHTML = "You Win!";
-                    playerVisual.innerHTML = "Scissor";
-                    opponentVisual.innerHTML = "Paper";
-                  }
-                  else if (result.result === 0) {
-                    gameroundResultText.innerHTML = "Draw!";
-                    playerVisual.innerHTML = "Scissor";
-                    opponentVisual.innerHTML = "Scissor";
-                  }
-                  else if (result.result === -1) {
-                    gameroundResultText.innerHTML = "You Lose!";
-                    playerVisual.innerHTML = "Scissor";
-                    opponentVisual.innerHTML = "Rock";
-                  }
-                }
-
-                const newScores: Gamestate | undefined = await getGameScore();
-                if (newScores === undefined) {
-                  console.log("Gamestate is undefined when getting score");
-                  return;
-                }
-                const playerScore: HTMLElement | null = document.getElementById("PlayerScore");
-                const opponentScore: HTMLElement | null = document.getElementById("OpponentScore");
-                if (playerScore !== null && opponentScore !== null) {
-                  playerScore.innerHTML = `Player score: ${newScores.playerScore}`;
-                  opponentScore.innerHTML = `Opponent score: ${newScores.opponentScore}`;
-                }
-              }}>Scissor</button>
               <div className="col-1"></div>
             </div>
           </div>
@@ -187,3 +73,41 @@ const GameBoard = ({ isLoggedIn }: GameBoardProps) => {
 };
 
 export default GameBoard;
+
+// Helper fucntion to handle game logic
+const handleChoice = async (playerChoice: Choice) => {
+  const result: Result | undefined = await makeMove(playerChoice);
+  if (!result) {
+    console.log(`Result undefined after choosing ${playerChoice}`);
+    return;
+  }
+
+  const gameroundResultText = document.getElementById("GameroundResultText");
+  const playerVisual = document.getElementById("PlayerVisual");
+  const opponentVisual = document.getElementById("OpponentVisual");
+
+  if (gameroundResultText && playerVisual && opponentVisual) {
+    const opponentChoice = result.result === 1 ? 
+      (playerChoice === Choice.Rock ? "Scissor" : playerChoice === Choice.Paper ? "Rock" : "Paper") :
+      result.result === 0 ? playerChoice : 
+      (playerChoice === Choice.Rock ? "Paper" : playerChoice === Choice.Paper ? "Scissor" : "Rock");
+
+    gameroundResultText.innerHTML = result.result === 1 ? "You Win!" : result.result === 0 ? "Draw!" : "You Lose!";
+    playerVisual.innerHTML = playerChoice;
+    opponentVisual.innerHTML = opponentChoice;
+  }
+
+  const newScores: Gamestate | undefined = await getGameScore();
+  if (!newScores) {
+    console.log("Gamestate is undefined when getting score");
+    return;
+  }
+
+  const playerScore = document.getElementById("PlayerScore");
+  const opponentScore = document.getElementById("OpponentScore");
+
+  if (playerScore && opponentScore) {
+    playerScore.innerHTML = `Player score: ${newScores.playerScore}`;
+    opponentScore.innerHTML = `Opponent score: ${newScores.opponentScore}`;
+  }
+};
