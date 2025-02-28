@@ -37,9 +37,27 @@ const GameBoard = ({ isLoggedIn }: GameBoardProps) => {
             </div>
 
             {/* Choice visual area */}
-            <div className="choicecontainer">
-              <p id="PlayerVisual" data-testid="PlayerVisual">Player</p>
-              <p id="OpponentVisual" data-testid="OpponentVisual">Opponent</p>
+            <div className='choicecontainer'>
+              <img 
+                  id="PlayerVisual" 
+                  data-testid="PlayerVisual" 
+                  alt="Player" 
+                  style={{ width: "15rem", height: "10rem" }}
+                  src='src/assets/react.svg'
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'src/assets/react.svg';
+                  }}
+                />
+                <img 
+                  id="OpponentVisual" 
+                  data-testid="OpponentVisual" 
+                  alt="Opponent"
+                  style={{ width: "15rem", height: "10rem" }}
+                  src='src/assets/react.svg'
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'src/assets/react.svg';
+                  }}
+                />
             </div>
           </div>
 
@@ -90,14 +108,24 @@ const handleChoice = async (playerChoice: Choice) => {
   const opponentVisual = document.getElementById("OpponentVisual");
 
   if (gameroundResultText && playerVisual && opponentVisual) {
-    const opponentChoice = result.result === 1 ?
+    const opponentChoice = result.result === 1 ? 
       (playerChoice === Choice.Rock ? "Scissor" : playerChoice === Choice.Paper ? "Rock" : "Paper") :
-      result.result === 0 ? playerChoice :
-        (playerChoice === Choice.Rock ? "Paper" : playerChoice === Choice.Paper ? "Scissor" : "Rock");
+      result.result === 0 ? playerChoice : 
+      (playerChoice === Choice.Rock ? "Paper" : playerChoice === Choice.Paper ? "Scissor" : "Rock");
 
     gameroundResultText.innerHTML = result.result === 1 ? "You Win!" : result.result === 0 ? "Draw!" : "You Lose!";
-    playerVisual.innerHTML = playerChoice;
-    opponentVisual.innerHTML = opponentChoice;
+
+    // If the elements are images, update their src and alt attributes.
+    if (playerVisual instanceof HTMLImageElement && opponentVisual instanceof HTMLImageElement) {
+      playerVisual.src = `src/assets/Player${playerChoice}.png`;
+      playerVisual.alt = `Player chose ${playerChoice}`;
+      opponentVisual.src = `src/assets/Opponent${opponentChoice}.png`;
+      opponentVisual.alt = `Opponent chose ${opponentChoice}`;
+    } else {
+      // If something goes wrong with images, update innerHTML as text fallback values.
+      playerVisual.innerHTML = playerChoice;
+      opponentVisual.innerHTML = opponentChoice;
+    }
   }
   updateScore();
 };
