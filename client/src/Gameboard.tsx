@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Choice } from "../../server/src/model/choices.enum";
 import { Gamestate } from "../../server/src/model/gamestate.interface";
-import { getGameScore, makeMove } from './api';
+import { getGameScore, makeMove,accountScore,startGame } from './api';
 import { Result } from '../../server/src/model/result.interface';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
@@ -17,6 +17,9 @@ const GameBoard = ({ isLoggedIn }: GameBoardProps) => {
   useEffect(() => {
     if (!isLoggedIn) {
       navigate("/login");  // Redirect to login if not logged in
+    } else {
+      updateScore();
+
     }
   }, [isLoggedIn, navigate]);
   //If user is logged in the component will not load
@@ -49,12 +52,12 @@ const GameBoard = ({ isLoggedIn }: GameBoardProps) => {
               Object.values(Choice) returns an array of the values of the enum Choice.
               for each, a button is created with the value as text and the handleChoice function as onClick.
               */}
-              
+
               {Object.values(Choice).map(choice => (
-                <button 
-                  key={choice} 
-                  type="button" 
-                  className="btn btn-primary btn-lg col-2" 
+                <button
+                  key={choice}
+                  type="button"
+                  className="btn btn-primary btn-lg col-2"
                   onClick={() => handleChoice(choice)}>
                   {choice}
                 </button>
@@ -77,7 +80,7 @@ export default GameBoard;
 // Helper fucntion to handle game logic
 const handleChoice = async (playerChoice: Choice) => {
   const result: Result | undefined = await makeMove(playerChoice);
-  if (!result) {
+  if (result === undefined) {
     console.log(`Result undefined after choosing ${playerChoice}`);
     return;
   }
@@ -87,20 +90,36 @@ const handleChoice = async (playerChoice: Choice) => {
   const opponentVisual = document.getElementById("OpponentVisual");
 
   if (gameroundResultText && playerVisual && opponentVisual) {
-    const opponentChoice = result.result === 1 ? 
+    const opponentChoice = result.result === 1 ?
       (playerChoice === Choice.Rock ? "Scissor" : playerChoice === Choice.Paper ? "Rock" : "Paper") :
-      result.result === 0 ? playerChoice : 
-      (playerChoice === Choice.Rock ? "Paper" : playerChoice === Choice.Paper ? "Scissor" : "Rock");
+      result.result === 0 ? playerChoice :
+        (playerChoice === Choice.Rock ? "Paper" : playerChoice === Choice.Paper ? "Scissor" : "Rock");
 
     gameroundResultText.innerHTML = result.result === 1 ? "You Win!" : result.result === 0 ? "Draw!" : "You Lose!";
     playerVisual.innerHTML = playerChoice;
     opponentVisual.innerHTML = opponentChoice;
   }
-
+  updateScore();
+};
+//Updates the score, and increase the wins and losses.
+//TODO: might have to be separated.
+const updateScore = async () => {
   const newScores: Gamestate | undefined = await getGameScore();
   if (!newScores) {
     console.log("Gamestate is undefined when getting score");
     return;
+  }
+  if(newScores.playerScore === 5){
+    await accountScore(1);
+    await startGame();
+    newScores.playerScore = 0;
+    newScores.opponentScore = 0;
+
+  }else if(newScores.opponentScore === 5){
+    await accountScore(-1);
+    await startGame();
+    newScores.playerScore = 0;
+    newScores.opponentScore = 0;
   }
 
   const playerScore = document.getElementById("PlayerScore");

@@ -1,31 +1,32 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // Make sure to import useNavigate correctly
 import { getAccount } from "./api";
-import { Account } from "../../server/src/model/account.interface";
+import { UserContent } from "../../server/src/model/usercontent.interface";
 
 interface AccountPageProps {
   isLoggedIn: boolean | null;
 }
 
 const AccountPage = ({ isLoggedIn }: AccountPageProps) => {
-  const [account, setAccount] = useState<Account | null>(null);
+  const [account, setAccount] = useState<UserContent | null>(null);
   const navigate = useNavigate();
 
   // Redirect immediately if not logged in
   useEffect(() => {
     if (!isLoggedIn) {
       navigate("/login");  // Redirect to login if not logged in
+    }else{
+      getAccountData();
     }
   }, [isLoggedIn, navigate]);
 
-  const handleClick = async () => {
+  const getAccountData = async () => {
     const fetchedAccount = await getAccount();
     if (fetchedAccount === undefined) return;
 
     // Check if the account contains all the required fields, then set the local account to fetched account
     if (
       fetchedAccount.username &&
-      fetchedAccount.password &&
       typeof fetchedAccount.accountWins === 'number' &&
       typeof fetchedAccount.accountLosses === 'number'
     ) {
@@ -40,12 +41,11 @@ const AccountPage = ({ isLoggedIn }: AccountPageProps) => {
     isLoggedIn ===true ? (
       <section className="heightFixer rounder centerObjects">
         <div>
-          <button onClick={handleClick}>Get Account</button>
           {account && (
             <div>
               <h2>Account Details</h2>
               <p>Username: {account.username}</p>
-              <p>Password: {account.password}</p>
+
               <p>Wins: {account.accountWins}</p>
               <p>Losses: {account.accountLosses}</p>
             </div>

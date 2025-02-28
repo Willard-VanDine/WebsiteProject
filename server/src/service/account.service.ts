@@ -33,6 +33,17 @@ export class AccountService {
         const account = this.users.find((user) => user.username === username && bcrypt.compare(password, user.password));
         return account;
     }
+    async updateAccount(username: string, number:number): Promise<void|undefined>{
+        const user = this.users.find((user) => user.username === username);
+        if(user === undefined){
+            return;
+        }
+        if(number === 1){
+            user.accountWins = user.accountWins +1;
+        }else if(number === -1){
+            user.accountLosses = user.accountLosses +1;
+        }
+    }
     
 
 }

@@ -27,7 +27,6 @@ gamestateRouter.get("/", async ( req: GamestateRequest, res: Response<Gamestate 
         }
         const gamestate : Gamestate| undefined = await gamestateService.getGameScore(req.session.username);
         if (!gamestate) {
-            console.log("User logged in as " + req.session.username + " no longer exists");
             delete req.session.username;
             res.status(401).send("Not logged in");
             return;
