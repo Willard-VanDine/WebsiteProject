@@ -15,9 +15,8 @@ export class GamestateService {
     constructor(accountService: AccountService){
         this.accountService = accountService;
     }
-    // Starts a new game -> reset the state (POST-request I believe, we request modification of data)
-    // Exposed for the router layer so player can request to start a new game
-    // should maybe return GameState, as we could use a get request for tomorrow, 
+    // Starts a new game -> reset the state
+    // Exposed for the router layer so player can request to start a new game 
     async startGame(username:string) : Promise<void|undefined> {
         const user : Account | undefined = await this.accountService.findAccount(username);
         if (user === undefined) {
@@ -89,8 +88,7 @@ export class GamestateService {
 
     // GET current game score. Explosed for the router layer.
     async getGameScore(username:string) : Promise<Gamestate| undefined> {
-        // I was unsure if sending score exposes risks for data manipulation
-        // in typescript like a java object, so I return a copy instead //Oscar
+        //Checks if valid User then returns the Users gamestate.
         const user : Account | undefined = await this.accountService.findAccount(username);
         if (user === undefined) {
             return undefined
