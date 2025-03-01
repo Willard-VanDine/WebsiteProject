@@ -109,9 +109,9 @@ const handleChoice = async (playerChoice: Choice) => {
 
   if (gameroundResultText && playerVisual && opponentVisual) {
     const opponentChoice = result.result === 1 ? 
-      (playerChoice === Choice.Rock ? "Scissor" : playerChoice === Choice.Paper ? "Rock" : "Paper") :
+      (playerChoice === Choice.Rock ? "Scissors" : playerChoice === Choice.Paper ? "Rock" : "Paper") :
       result.result === 0 ? playerChoice : 
-      (playerChoice === Choice.Rock ? "Paper" : playerChoice === Choice.Paper ? "Scissor" : "Rock");
+      (playerChoice === Choice.Rock ? "Paper" : playerChoice === Choice.Paper ? "Scissors" : "Rock");
 
     gameroundResultText.innerHTML = result.result === 1 ? "You Win!" : result.result === 0 ? "Draw!" : "You Lose!";
 
