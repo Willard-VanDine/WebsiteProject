@@ -1,30 +1,39 @@
 import React, { useState } from 'react';
 import Sidenav from './Sidenav';  // Import the Sidenav component
 import Container from './Container';  // Import the Container which holds the content logic
+import { Routes, Route } from 'react-router-dom'
+import Homepage from './Homepage';
+import Gameboard from './Gameboard';
+import Login from './Login';
+import Register from './Register';
+import { useAuth } from './useAuth';
+import AccountPage from './AccountPage';
 
 
 
 
 const Content = () => {
-  // State to track which page is currently selected
-  const [currentPage, setCurrentPage] = useState<'game' | 'home'>('game');
 
-  // Function to handle page switching
-  const handlePageChange = (page: 'game' | 'home') => {
-    setCurrentPage(page);
-  };
+  const {isLoggedIn, setIsLoggedIn} = useAuth();
+
 
   return (
     <div className="Content mt-1 mb-1" >
       <div className='container'>
         <div className="row">
           <div className="col-2">
-            {/* Sidenav component now takes handlePageChange as a prop */}
-            <Sidenav onPageChange={handlePageChange} />
+            <Sidenav isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>
           </div>
           <div className='col-10'>
-              {/* Container only handles displaying the selected page */}
-            <Container currentPage={currentPage} />
+          <Container>
+            <Routes>
+              <Route path="/" element={<Homepage />} />
+              <Route path="/gameboard" element={<Gameboard isLoggedIn={isLoggedIn}  />} />
+              <Route path="/login" element={<Login isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/account" element={<AccountPage isLoggedIn={isLoggedIn} /> } />
+            </Routes>
+          </Container>
           </div>
         </div>
       </div>

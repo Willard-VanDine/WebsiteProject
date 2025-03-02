@@ -207,3 +207,14 @@ footer{
   width : 100%;
   flex-direction: column;
 }
+
+/*This is used to transfer size between children */
+.heightFixer{
+  height: calc(100vh - 4rem - 8px);
+}
+.centerObjects{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}

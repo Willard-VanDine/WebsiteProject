@@ -1,35 +1,49 @@
 import { Account } from "../model/account.interface";
+import bcrypt from "bcrypt";
 
 export class AccountService {
-    private acc : Account = {
-        username : "", 
-        accountWins : 0, 
-        accountLosses : 0
-    };
+    users: Account[] =[];
 
-    // Register a new account.
-    async registerAccount(username: string) : Promise<void> {
-        // Should register a new account with the provided username and resets the amount of wins and losses.
-        // TODO: this needs to be updated later most likely, to add passwords as an input which then is passed to the database
-        this.acc.username = username;
-        this.acc.accountWins = 0;
-        this.acc.accountLosses = 0;
-    }
     
 
-    // TODO: We need to reconstruct this!.
-    // Update account wins and losses after a game
-    // Can maybe take input 1 for win, -1 for loss
-    // to follow structure from gamestate service class, 0 should not be neccesary as we only call the method when it is 1 or -1
-    async updateAccountScore(result: number): Promise<void> {
-        if(result === 1)
-            this.acc.accountWins++;
-        else this.acc.accountLosses++;
+    // Register a new account.
+    async registerAccount(username: string, password: string) : Promise<void> {
+        // Creates a new Account with a username, hashedpassword. It also includes Accountlosses and Accountwins
+        // Each Account also have their own gamestate to allow them to play games.
+        const salt = bcrypt.genSaltSync(10);
+        this.users.push({
+            username: username,
+            password: bcrypt.hashSync(password, salt),
+            accountLosses:0,
+            accountWins: 0,
+            gamestate: {
+                playerScore : 0,
+                opponentScore : 0
+            }
+        });
     }
-
-    // Get all account details (name, wins, losses) this is done by making a deep copy of the object.
-    async getAccount(): Promise<Account> {
-        return JSON.parse(JSON.stringify(this.acc));
+    
+    //Takes a username and returns the Account that has that username, you can also send in a password
+    //If you do send in a password it will compare the password to encrypted version
+    async findAccount(username: string, password ?: string): Promise<Account | undefined> {
+        if (! password) {
+            const user = this.users.find((user) => user.username === username);
+            return user;
+        }
+        const account = this.users.find((user) => user.username === username && bcrypt.compare(password, user.password));
+        return account;
     }
+    async updateAccount(username: string, number:number): Promise<void|undefined>{
+        const user = this.users.find((user) => user.username === username);
+        if(user === undefined){
+            return;
+        }
+        if(number === 1){
+            user.accountWins = user.accountWins +1;
+        }else if(number === -1){
+            user.accountLosses = user.accountLosses +1;
+        }
+    }
+    
 
 }

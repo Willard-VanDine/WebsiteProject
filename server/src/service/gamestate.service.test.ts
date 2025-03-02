@@ -1,10 +1,13 @@
 import { GamestateService } from './gamestate.service';
 import { Choice } from '../model/choices.enum';
+import { AccountService } from './account.service';
 
   let gamestateService: GamestateService;
 
-  beforeEach(() => {
-    gamestateService = new GamestateService();
+  beforeEach(async () => {
+    let testAccount : AccountService = new AccountService();
+    await testAccount.registerAccount("test", "123");
+    gamestateService = new GamestateService(testAccount);
   });
 
 
@@ -13,11 +16,12 @@ import { Choice } from '../model/choices.enum';
   });
 
 test("Should reset the game state and scores whenever a new game is started", async () => {
-   
+  
+
     jest.spyOn(gamestateService as any, 'getOpponentChoice').mockReturnValue(Choice.Scissors);
-    await gamestateService.makeMove(Choice.Rock);
-    await gamestateService.startGame();
-    expect(await gamestateService.getGameScore()).toStrictEqual({playerScore: 0, opponentScore: 0})
+    await gamestateService.makeMove("test", Choice.Rock);
+    await gamestateService.startGame("test");
+    expect(await gamestateService.getGameScore("test")).toStrictEqual({playerScore: 0, opponentScore: 0})
 });
 
 
@@ -50,13 +54,13 @@ test("The user should be able to choose Rock", async () => {
     // Such as Rock vs Scissor should return 1 for victory etc.
 
     jest.spyOn(gamestateService as any, 'getOpponentChoice').mockReturnValue(Choice.Scissors);
-    expect(await gamestateService.makeMove(Choice.Rock)).toBe(1);
+    expect(await gamestateService.makeMove("test", Choice.Rock)).toBe(1);
 
     jest.spyOn(gamestateService as any, 'getOpponentChoice').mockReturnValue(Choice.Rock);
-    expect(await gamestateService.makeMove(Choice.Rock)).toBe(0);
+    expect(await gamestateService.makeMove("test" , Choice.Rock)).toBe(0);
 
     jest.spyOn(gamestateService as any, 'getOpponentChoice').mockReturnValue(Choice.Paper);
-    expect(await gamestateService.makeMove(Choice.Rock)).toBe(-1);
+    expect(await gamestateService.makeMove("test", Choice.Rock)).toBe(-1);
 
 
 
@@ -68,13 +72,13 @@ test("The user should be able to choose Paper", async () => {
     // This tests tests the input Choice.Rock and tests wheter or not it returns the proper values
 
     jest.spyOn(gamestateService as any, 'getOpponentChoice').mockReturnValue(Choice.Scissors);
-    expect(await gamestateService.makeMove(Choice.Paper)).toBe(-1);
+    expect(await gamestateService.makeMove("test", Choice.Paper)).toBe(-1);
 
     jest.spyOn(gamestateService as any, 'getOpponentChoice').mockReturnValue(Choice.Rock);
-    expect(await gamestateService.makeMove(Choice.Paper)).toBe(1);
+    expect(await gamestateService.makeMove("test", Choice.Paper)).toBe(1);
 
     jest.spyOn(gamestateService as any, 'getOpponentChoice').mockReturnValue(Choice.Paper);
-    expect(await gamestateService.makeMove(Choice.Paper)).toBe(0);
+    expect(await gamestateService.makeMove("test", Choice.Paper)).toBe(0);
 
 
 
@@ -85,13 +89,13 @@ test("The user should be able to choose Scissors", async () => {
     // This tests tests the input Choice.Scissors and tests wheter or not it returns the proper values
 
     jest.spyOn(gamestateService as any, 'getOpponentChoice').mockReturnValue(Choice.Scissors);
-    expect(await gamestateService.makeMove(Choice.Scissors)).toBe(0);
+    expect(await gamestateService.makeMove("test", Choice.Scissors)).toBe(0);
 
     jest.spyOn(gamestateService as any, 'getOpponentChoice').mockReturnValue(Choice.Rock);
-    expect(await gamestateService.makeMove(Choice.Scissors)).toBe(-1);
+    expect(await gamestateService.makeMove("test", Choice.Scissors)).toBe(-1);
 
     jest.spyOn(gamestateService as any, 'getOpponentChoice').mockReturnValue(Choice.Paper);
-    expect(await gamestateService.makeMove(Choice.Scissors)).toBe(1);
+    expect(await gamestateService.makeMove("test", Choice.Scissors)).toBe(1);
 
 
 
@@ -101,17 +105,14 @@ test("The user should be able to choose Scissors", async () => {
 test("The User should be able to check the score", async () => {
     // Checks if it returns the correct values at the start, then checks wheter or not it increases the
     // Correct score
-    await gamestateService.startGame();
-    expect(await gamestateService.getGameScore()).toStrictEqual(({playerScore: 0, opponentScore: 0}));
+    await gamestateService.startGame("test");
+    expect(await gamestateService.getGameScore("test")).toStrictEqual(({playerScore: 0, opponentScore: 0}));
 
     jest.spyOn(gamestateService as any, 'getOpponentChoice').mockReturnValue(Choice.Scissors);
-    await gamestateService.makeMove(Choice.Rock);
+    await gamestateService.makeMove("test", Choice.Rock);
 
 
-    expect(await gamestateService.getGameScore()).toStrictEqual(({playerScore: 1, opponentScore: 0}));
-
-    
-
+    expect(await gamestateService.getGameScore("test")).toStrictEqual(({playerScore: 1, opponentScore: 0}));
 
 
 });
