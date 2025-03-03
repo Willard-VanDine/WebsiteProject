@@ -3,9 +3,10 @@ import { GamestateService } from "../service/gamestate.service";
 import { Gamestate } from "../model/gamestate.interface";
 import { Choice } from "../model/choices.enum";
 import { Result } from "../model/result.interface";
+import { IGamestateService } from "../service/gamestate.service.interface";
 
 // Initialize router paths:
-export  function gamestateRouter(gamestateService: GamestateService): Router {
+export  function gamestateRouter(gamestateService: IGamestateService): Router {
     // Initialize gamestate service and router
     const gamestateRouter = express.Router();
 

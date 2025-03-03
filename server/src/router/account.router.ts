@@ -1,10 +1,10 @@
 import express, { Request, Response, Router } from "express";
-import { AccountService } from "../service/account.service";
 import { Account } from "../model/account.interface";
 import { LoggedIn } from "../model/loggedin.interface";
 import { UserContent } from "../model/usercontent.interface";
+import { IAccountService } from "../service/account.service.interface";
 
-export function accountRouter(accountService: AccountService): Router {
+export function accountRouter(accountService: IAccountService): Router {
     const accountRouter = express.Router();
 
     //Used for calls that do not require an input.

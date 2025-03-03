@@ -1,26 +1,32 @@
 import { Gamestate } from "../model/gamestate.interface";
 import { Choice } from "../model/choices.enum";
-import { AccountService } from "./account.service";
 import { Account } from "../model/account.interface";
 import { IAccountService } from "./account.service.interface";
+import { IGamestateService } from "./gamestate.service.interface";
+import { GamestateModel } from "../../db/gamestateModel.db";
 
-export class GamestateService {
+export class GamestateDBService implements IGamestateService {
     private accountService: IAccountService;
-    
+
 
     // Represent an ongoing game, start "fresh" with no choices made yet.
     private currentGame: { playerChoice: Choice | null, opponentChoice: Choice | null } = {
         playerChoice: null,
         opponentChoice: null
     };
-    constructor(accountService: IAccountService){
+    constructor(accountService: IAccountService) {
         this.accountService = accountService;
     }
     // Starts a new game -> reset the state
     // Exposed for the router layer so player can request to start a new game 
-    async startGame(username:string) : Promise<void|undefined> {
-        const user : Account | undefined = await this.accountService.findAccount(username);
-        if (user === undefined) {
+    async startGame(username: string): Promise<void | undefined> {
+        const userGamestate: GamestateModel | null = await GamestateModel.findOne({
+            attributes: ['username', 'playerScore', 'opponentScore'],
+            where: {
+                username: username
+            }
+        });
+        if (userGamestate === null) {
             return undefined
         }
         this.currentGame = {
@@ -28,30 +34,35 @@ export class GamestateService {
             opponentChoice: null
         };
 
-        user.gamestate ={
-            playerScore: 0,
-            opponentScore: 0            
-        };
+        await userGamestate.update({
+            playerScore:0,
+            opponentScore:0
+        });
     }
-    
+
     // Make a move for the player and for the "PC opponent" (POST-request I believe, as above)
     // Exposed for the router layer, so player can play lé Sten Sax Påse :)
     async makeMove(username: string, playerChoice: Choice): Promise<number | undefined> {
-        const user: Account | undefined = await this.accountService.findAccount(username);
-        if (user === undefined) {
+        const userGamestate: GamestateModel | null = await GamestateModel.findOne({
+            attributes: ['username', 'playerScore', 'opponentScore'],
+            where: {
+                username: username
+            }
+        });
+        if (userGamestate === null) {
             return undefined;
         }
-    
+
         // Proceed with the move and determine winner
         this.currentGame.playerChoice = playerChoice;
         this.currentGame.opponentChoice = this.getOpponentChoice();
-        const result = this.determineWinner(user);
-    
-       
-    
+        const result = await this.determineWinner(userGamestate);
+
+
+
         return result;
     }
-    
+
 
     // Helper method to randomly generate a choice for the opponent
     private getOpponentChoice(): Choice {
@@ -67,7 +78,7 @@ export class GamestateService {
     // Returns  1 if player scored
     // Returns  0 if it's a draw
     // Returns -1 if opponent scored
-    private determineWinner(user:Account): number {
+    private async determineWinner(userGamestate: GamestateModel): Promise<number> {
         const { playerChoice, opponentChoice } = this.currentGame;
 
         if (playerChoice === opponentChoice) {
@@ -78,19 +89,23 @@ export class GamestateService {
         if ((playerChoice === Choice.Rock && opponentChoice === Choice.Scissors) ||
             (playerChoice === Choice.Paper && opponentChoice === Choice.Rock) ||
             (playerChoice === Choice.Scissors && opponentChoice === Choice.Paper)) {
-            user.gamestate.playerScore++;
+                await userGamestate.update({
+                    playerScore: userGamestate.playerScore +1,
+                });
             return 1;
         }
 
         // If it's not draw & player didn't score -> opponent scored
-        user.gamestate.opponentScore++;
+        await userGamestate.update({
+            opponentScore: userGamestate.opponentScore +1,
+        });
         return -1; // PC wins
     }
 
     // GET current game score. Explosed for the router layer.
-    async getGameScore(username:string) : Promise<Gamestate| undefined> {
+    async getGameScore(username: string): Promise<Gamestate | undefined> {
         //Checks if valid User then returns the Users gamestate.
-        const user : Account | undefined = await this.accountService.findAccount(username);
+        const user: Account | undefined = await this.accountService.findAccount(username);
         if (user === undefined) {
             return undefined
         }

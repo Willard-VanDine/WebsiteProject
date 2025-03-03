@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Choice } from "../../server/src/model/choices.enum";
 import { Gamestate } from "../../server/src/model/gamestate.interface";
-import { getGameScore, makeMove,accountScore,startGame } from './api';
+import { getGameScore, makeMove, accountScore, startGame } from './api';
 import { Result } from '../../server/src/model/result.interface';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
@@ -38,26 +38,26 @@ const GameBoard = ({ isLoggedIn }: GameBoardProps) => {
 
             {/* Choice visual area */}
             <div className='choicecontainer'>
-              <img 
-                  id="PlayerVisual" 
-                  data-testid="PlayerVisual" 
-                  alt="Player" 
-                  style={{ width: "15rem", height: "10rem" }}
-                  src='src/assets/react.svg'
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'src/assets/react.svg';
-                  }}
-                />
-                <img 
-                  id="OpponentVisual" 
-                  data-testid="OpponentVisual" 
-                  alt="Opponent"
-                  style={{ width: "15rem", height: "10rem" }}
-                  src='src/assets/react.svg'
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'src/assets/react.svg';
-                  }}
-                />
+              <img
+                id="PlayerVisual"
+                data-testid="PlayerVisual"
+                alt="Player"
+                style={{ width: "15rem", height: "10rem" }}
+                src='src/assets/react.svg'
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'src/assets/react.svg';
+                }}
+              />
+              <img
+                id="OpponentVisual"
+                data-testid="OpponentVisual"
+                alt="Opponent"
+                style={{ width: "15rem", height: "10rem" }}
+                src='src/assets/react.svg'
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'src/assets/react.svg';
+                }}
+              />
             </div>
           </div>
 
@@ -108,10 +108,10 @@ const handleChoice = async (playerChoice: Choice) => {
   const opponentVisual = document.getElementById("OpponentVisual");
 
   if (gameroundResultText && playerVisual && opponentVisual) {
-    const opponentChoice = result.result === 1 ? 
+    const opponentChoice = result.result === 1 ?
       (playerChoice === Choice.Rock ? "Scissors" : playerChoice === Choice.Paper ? "Rock" : "Paper") :
-      result.result === 0 ? playerChoice : 
-      (playerChoice === Choice.Rock ? "Paper" : playerChoice === Choice.Paper ? "Scissors" : "Rock");
+      result.result === 0 ? playerChoice :
+        (playerChoice === Choice.Rock ? "Paper" : playerChoice === Choice.Paper ? "Scissors" : "Rock");
 
     gameroundResultText.innerHTML = result.result === 1 ? "You Win!" : result.result === 0 ? "Draw!" : "You Lose!";
 
@@ -127,7 +127,7 @@ const handleChoice = async (playerChoice: Choice) => {
       opponentVisual.innerHTML = opponentChoice;
     }
   }
-  updateScore();
+  await updateScore();
 };
 //Updates the score, and increase the wins and losses.
 //TODO: might have to be separated.
@@ -137,13 +137,13 @@ const updateScore = async () => {
     console.log("Gamestate is undefined when getting score");
     return;
   }
-  if(newScores.playerScore === 5){
+  if (newScores.playerScore === 5) {
     await accountScore(1);
     await startGame();
     newScores.playerScore = 0;
     newScores.opponentScore = 0;
 
-  }else if(newScores.opponentScore === 5){
+  } else if (newScores.opponentScore === 5) {
     await accountScore(-1);
     await startGame();
     newScores.playerScore = 0;

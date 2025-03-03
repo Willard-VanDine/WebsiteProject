@@ -1,7 +1,8 @@
 import { Account } from "../model/account.interface";
 import bcrypt from "bcrypt";
+import { IAccountService } from "./account.service.interface";
 
-export class AccountService {
+export class AccountService implements IAccountService{
     users: Account[] =[];
 
     
