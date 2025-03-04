@@ -143,20 +143,7 @@ const updateScore = async () => {
     console.log("Gamestate is undefined when getting score");
     return;
   }
-  if (newScores.playerScore === 5) {
-    await accountScore(1);
-    await startGame();
-    newScores.playerScore = 0;
-    newScores.opponentScore = 0;
-    alert('You Win!');
-
-  } else if (newScores.opponentScore === 5) {
-    await accountScore(-1);
-    await startGame();
-    newScores.playerScore = 0;
-    newScores.opponentScore = 0;
-    alert('You Lose!');
-  }
+  
 
   const playerScore = document.getElementById("PlayerScore");
   const opponentScore = document.getElementById("OpponentScore");

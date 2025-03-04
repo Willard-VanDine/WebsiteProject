@@ -6,26 +6,35 @@ import { IAccountService } from "./account.service.interface";
 export class AccountDBService implements IAccountService {
 
 
+    //Initalize all tables if they are not currently present.
+    constructor(){
+        this.init();
+    }
+    private async init(): Promise<void>{
+        await AccountModel.sync();
+        await AccountStatsModel.sync();
+        await GamestateModel.sync();
+    }
 
     // Register a new account.
     async registerAccount(username: string, password: string): Promise<boolean> {
         // Creates a new Account with a username, hashedpassword. It also includes Accountlosses and Accountwins
         // Each Account also have their own gamestate to allow them to play games.
+        
         const user: Account | undefined = await this.findAccount(username);
         if (user === undefined) {
             const salt = bcrypt.genSaltSync(10);
-            await AccountModel.sync();
+            
             AccountModel.create({
                 username: username,
                 password: bcrypt.hashSync(password, salt),
             });
-            await AccountStatsModel.sync();
+            
             AccountStatsModel.create({
                 username: username,
                 accountLosses: 0,
                 accountWins: 0
             });
-            await GamestateModel.sync();
             GamestateModel.create({
                 username: username,
                 playerScore: 0,

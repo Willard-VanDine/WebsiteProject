@@ -91,16 +91,26 @@ export class GamestateDBService implements IGamestateService {
         if ((playerChoice === Choice.Rock && opponentChoice === Choice.Scissors) ||
             (playerChoice === Choice.Paper && opponentChoice === Choice.Rock) ||
             (playerChoice === Choice.Scissors && opponentChoice === Choice.Paper)) {
+                if(userGamestate.dataValues.playerScore < 4){
                 await userGamestate.update({
                     playerScore: userGamestate.playerScore +1,
                 });
+                }else{
+                    await this.startGame(userGamestate.dataValues.username);
+                    await this.accountService.updateAccount(userGamestate.dataValues.username, 1);
+                }
             return 1;
         }
 
         // If it's not draw & player didn't score -> opponent scored
+        if(userGamestate.dataValues.opponentScore <4){
         await userGamestate.update({
             opponentScore: userGamestate.opponentScore +1,
         });
+        }else{
+            await this.startGame(userGamestate.dataValues.username);
+            await this.accountService.updateAccount(userGamestate.dataValues.username, -1);
+        }
         return -1; // PC wins
     }
 

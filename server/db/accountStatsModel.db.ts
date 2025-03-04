@@ -1,6 +1,6 @@
 import { Model, InferAttributes, InferCreationAttributes, CreationOptional, DataTypes, ForeignKey } from 'sequelize';
 import { sequelize } from './conn';
-import { AccountModel } from './accountmodel.db';
+import { AccountModel } from './accountModel.db';
 
 export class AccountStatsModel extends Model<InferAttributes<AccountStatsModel>, InferCreationAttributes<AccountStatsModel>>{
     declare username: ForeignKey<AccountModel['username']>;
