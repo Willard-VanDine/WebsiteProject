@@ -1,8 +1,6 @@
 import { Account } from "../model/account.interface";
 import bcrypt from "bcrypt";
-import { AccountModel } from "../../db/accountmodel.db";
-import { AccountStatsModel } from "../../db/accountStatsModel.db";
-import { GamestateModel } from "../../db/gamestateModel.db";
+import { AccountModel, AccountStatsModel, GamestateModel } from '../../db/modelloader';
 import { IAccountService } from "./account.service.interface";
 
 export class AccountDBService implements IAccountService {
