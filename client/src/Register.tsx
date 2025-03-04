@@ -23,7 +23,11 @@ export default function RegisterScreen() {
                 }}></input>
             </p>
             <p><button onClick={async () => {
-                await registerUser(username, password);
+                if(await registerUser(username, password)=== true){
+                    alert("Register succesfull!");
+                }else{
+                    alert("Some sort of error occured!");
+                }
                 navigate("/");
             }}>Register </button></p>
             <NavLink to="/" end>Back to login screen</NavLink>

@@ -97,6 +97,12 @@ export default GameBoard;
 
 // Helper fucntion to handle game logic
 const handleChoice = async (playerChoice: Choice) => {
+  await updateView(playerChoice);
+  await updateScore();
+  
+};
+
+const updateView = async (playerChoice: Choice) =>{
   const result: Result | undefined = await makeMove(playerChoice);
   if (result === undefined) {
     console.log(`Result undefined after choosing ${playerChoice}`);
@@ -127,8 +133,8 @@ const handleChoice = async (playerChoice: Choice) => {
       opponentVisual.innerHTML = opponentChoice;
     }
   }
-  await updateScore();
-};
+}
+
 //Updates the score, and increase the wins and losses.
 //TODO: might have to be separated.
 const updateScore = async () => {
@@ -142,12 +148,14 @@ const updateScore = async () => {
     await startGame();
     newScores.playerScore = 0;
     newScores.opponentScore = 0;
+    alert('You Win!');
 
   } else if (newScores.opponentScore === 5) {
     await accountScore(-1);
     await startGame();
     newScores.playerScore = 0;
     newScores.opponentScore = 0;
+    alert('You Lose!');
   }
 
   const playerScore = document.getElementById("PlayerScore");

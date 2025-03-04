@@ -10,29 +10,34 @@ export class AccountDBService implements IAccountService {
 
 
     // Register a new account.
-    async registerAccount(username: string, password: string): Promise<void> {
+    async registerAccount(username: string, password: string): Promise<boolean> {
         // Creates a new Account with a username, hashedpassword. It also includes Accountlosses and Accountwins
         // Each Account also have their own gamestate to allow them to play games.
-        const salt = bcrypt.genSaltSync(10);
-        await AccountModel.sync();
-        AccountModel.create({
-            username: username,
-            password: bcrypt.hashSync(password, salt),
-        });
-        await AccountStatsModel.sync();
-        AccountStatsModel.create({
-            username: username,
-            accountLosses: 0,
-            accountWins: 0
-        });
-        await GamestateModel.sync();
-        GamestateModel.create({
-            username: username,
-            playerScore: 0,
-            opponentScore: 0
+        const user: Account | undefined = await this.findAccount(username);
+        if (user === undefined) {
+            const salt = bcrypt.genSaltSync(10);
+            await AccountModel.sync();
+            AccountModel.create({
+                username: username,
+                password: bcrypt.hashSync(password, salt),
+            });
+            await AccountStatsModel.sync();
+            AccountStatsModel.create({
+                username: username,
+                accountLosses: 0,
+                accountWins: 0
+            });
+            await GamestateModel.sync();
+            GamestateModel.create({
+                username: username,
+                playerScore: 0,
+                opponentScore: 0
 
-        });
-
+            });
+            return true;
+        }else{
+            return false;
+        }
     }
 
     //Takes a username and returns the Account that has that username, you can also send in a password
@@ -72,15 +77,12 @@ export class AccountDBService implements IAccountService {
                     opponentScore: game.dataValues.opponentScore
                 }
             }
-            if (account === undefined) {
-                return undefined;
-            }
             if (pass === undefined) {
                 return account;
             } else {
-                if (bcrypt.compareSync(pass, account.password)){
+                if (bcrypt.compareSync(pass, user.dataValues.password)) {
                     return account;
-                }else{
+                } else {
                     return undefined;
                 }
             }
@@ -88,27 +90,29 @@ export class AccountDBService implements IAccountService {
 
             // const account = this.users.find((user) => user.username === username && bcrypt.compare(password, user.password));
 
+        } else {
+            return undefined;
         }
     }
-    async updateAccount(username: string, number: number): Promise < void| undefined > {
-        
+    async updateAccount(username: string, number: number): Promise<void | undefined> {
+
         const stats: AccountStatsModel | null = await AccountStatsModel.findOne({
             attributes: ['username', 'accountWins', 'accountLosses'],
             where: {
                 username: username
             }
         });
-        if(stats === null){
+        if (stats === null) {
             return undefined;
         }
 
         if (number === 1) {
             stats.update({
-                accountWins: stats.accountWins+1,
+                accountWins: stats.accountWins + 1,
             });
         } else if (number === -1) {
             stats.update({
-                accountLosses: stats.accountLosses+1,
+                accountLosses: stats.accountLosses + 1,
             });
         }
     }

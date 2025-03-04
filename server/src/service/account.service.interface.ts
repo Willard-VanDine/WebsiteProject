@@ -8,7 +8,7 @@ export interface IAccountService {
 
     // Register a new account using a username string and a username password, does not return a value
     // Fails if the username is already taken
-    registerAccount(username: string, password: string) : Promise<void> 
+    registerAccount(username: string, password: string) : Promise<boolean> 
         
        
     

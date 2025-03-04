@@ -16,6 +16,7 @@ export function accountRouter(accountService: IAccountService): Router {
         body: { username: string, password: string },
         session: any
     }
+    //TODO: Fixa alla interfaces in i denna filen.
     interface UpdateAccount extends Request{
         body: {number:number},
         session: any
@@ -67,8 +68,12 @@ export function accountRouter(accountService: IAccountService): Router {
     //Register a user by using the constructor. Does not return a body, just a 201 message.
     accountRouter.post("/", async (req: CreateAccountRequest, res: Response) => {
         try{
-        await accountService.registerAccount(req.body.username, req.body.password);
-        res.status(201).send();
+        if(await accountService.registerAccount(req.body.username, req.body.password) === true){
+            res.status(201).send();
+        }
+        else{
+             res.status(401).send();
+        }
         }catch(e:any){
             res.status(500).send(e.message);
         }

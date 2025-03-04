@@ -42,6 +42,8 @@ export class GamestateDBService implements IGamestateService {
 
     // Make a move for the player and for the "PC opponent" (POST-request I believe, as above)
     // Exposed for the router layer, so player can play lé Sten Sax Påse :)
+
+    //TODO: Should perhaps return Gamestate, it should definetly check the database for winner of Game.
     async makeMove(username: string, playerChoice: Choice): Promise<number | undefined> {
         const userGamestate: GamestateModel | null = await GamestateModel.findOne({
             attributes: ['username', 'playerScore', 'opponentScore'],
