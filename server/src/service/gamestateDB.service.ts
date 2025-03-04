@@ -3,7 +3,7 @@ import { Choice } from "../model/choices.enum";
 import { Account } from "../model/account.interface";
 import { IAccountService } from "./account.service.interface";
 import { IGamestateService } from "./gamestate.service.interface";
-import { GamestateModel } from "../../db/gamestateModel.db";
+import { GamestateModel } from '../../db/modelloader';
 
 export class GamestateDBService implements IGamestateService {
     private accountService: IAccountService;
