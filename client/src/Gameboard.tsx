@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Choice } from "../../server/src/model/choices.enum";
 import { Gamestate } from "../../server/src/model/gamestate.interface";
-import { getGameScore, makeMove, accountScore, startGame } from './api';
+import { getGameScore, makeMove, accountScore,} from './api';
 import { Result } from '../../server/src/model/result.interface';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
@@ -97,11 +97,17 @@ export default GameBoard;
 
 // Helper fucntion to handle game logic
 const handleChoice = async (playerChoice: Choice) => {
-  await updateView(playerChoice);
+  // await updateView(playerChoice);
+  const result: Gamestate | undefined = await makeMove(playerChoice);
+  if (result === undefined) {
+    console.log(`Result undefined after choosing ${playerChoice}`);
+    return;
+  }
+  alert(result);
   await updateScore();
   
 };
-
+/*
 const updateView = async (playerChoice: Choice) =>{
   const result: Result | undefined = await makeMove(playerChoice);
   if (result === undefined) {
@@ -134,7 +140,7 @@ const updateView = async (playerChoice: Choice) =>{
     }
   }
 }
-
+*/
 //Updates the score, and increase the wins and losses.
 //TODO: might have to be separated.
 const updateScore = async () => {

@@ -27,7 +27,7 @@ export function accountRouter(accountService: IAccountService): Router {
         try{
         const account:Account | undefined = await accountService.findAccount(req.session.username);
        //if such a user exist then return the properties otherwise message
-        if(req.session.username && account != undefined){
+        if((req.session.username != undefined) && (account != undefined)){
            const userContent: UserContent = {username: account.username, accountWins: account.accountWins, accountLosses: account.accountLosses};
             res.status(200).send(userContent);
         }else{
