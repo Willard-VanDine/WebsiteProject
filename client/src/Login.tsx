@@ -47,6 +47,7 @@ const LoginScreen = ({ isLoggedIn, setIsLoggedIn }: LoginProps) => {
                         onChange={(e) => {
                             setUsername(e.target.value);
                         }}
+                        className="form-control"
                     />
                 </p>
                 <p>
@@ -57,6 +58,7 @@ const LoginScreen = ({ isLoggedIn, setIsLoggedIn }: LoginProps) => {
                         onChange={(e) => {
                             setPassword(e.target.value);
                         }}
+                        className="form-control"
                     />
                 </p>
                 <p>

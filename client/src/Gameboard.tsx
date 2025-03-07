@@ -75,7 +75,7 @@ const GameBoard = ({ isLoggedIn }: GameBoardProps) => {
                 <button
                   key={choice}
                   type="button"
-                  className="btn btn-primary btn-lg col-2"
+                  className="btn gameboard-btn btn-lg col-2"
                   onClick={() => handleChoice(choice)}>
                   {choice}
                 </button>

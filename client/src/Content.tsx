@@ -18,7 +18,7 @@ const Content = () => {
 
 
   return (
-    <div className="Content mt-1 mb-1" >
+    <div className="Content pt-1 pb-1" >
       <div className='container'>
         <div className="row">
           <div className="col-2">

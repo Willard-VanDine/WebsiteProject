@@ -14,13 +14,20 @@ export default function RegisterScreen() {
                 <label htmlFor="username">Username</label>
                 <input type="text" id="username" onChange={(e) => {
                     setUsername(e.target.value);
-                }}></input>
+                }}
+                className="form-control"
+                ></input>
             </p>
             <p>
                 <label htmlFor="password">Password</label>
                 <input type="password" id="password" onChange={(e) => {
                     setPassword(e.target.value);
-                }}></input>
+                }}
+                className="form-control"
+                >
+
+
+                </input>
             </p>
             <p><button onClick={async () => {
                 if(await registerUser(username, password)=== true){

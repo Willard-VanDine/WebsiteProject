@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // Make sure to import useNavigate correctly
 import { getAccount } from "./api";
 import { UserContent } from "../../server/src/model/usercontent.interface";
+import { Card } from "react-bootstrap"; 
 
 interface AccountPageProps {
   isLoggedIn: boolean | null;
@@ -36,19 +37,41 @@ const AccountPage = ({ isLoggedIn }: AccountPageProps) => {
       setAccount(null);
     }
   };
-  // Component will not load if user is logged in.
+
   return (
     isLoggedIn ===true ? (
       <section className="heightFixer rounder centerObjects">
         <div>
           {account && (
-            <div>
-              <h2>Account Details</h2>
-              <p>Username: {account.username}</p>
+          <Card className="card-container p-4 text-center">
+          <Card.Body>
+            <h2 className="mb-3">Account Details</h2>
+            <p><strong>Username:</strong> {account!.username}</p>
 
-              <p>Wins: {account.accountWins}</p>
-              <p>Losses: {account.accountLosses}</p>
+            <div className="d-flex justify-content-between mt-3">
+              <p className="text-success"><strong>Wins:</strong> {account!.accountWins}</p>
+              <p className="text-danger"><strong>Losses:</strong> {account!.accountLosses}</p>
             </div>
+
+            {/* Progress Bar */}
+            <div className="progress">
+              <div 
+                className="progress-bar bg-success" 
+                style={{ width: `${
+                  (account!.accountWins + account!.accountLosses) ?
+                  Math.round((account!.accountWins / (account!.accountWins + account!.accountLosses)) * 100) :
+                  0
+                  }%` }}>
+              </div>
+            </div>
+
+            <p className="mt-2"><strong>Win Rate:</strong> {
+                  (account!.accountWins + account!.accountLosses) ?
+                  Math.round((account!.accountWins / (account!.accountWins + account!.accountLosses)) * 100) :
+                  0
+                  }%</p>
+          </Card.Body>
+        </Card>
           )}
         </div>
       </section>
