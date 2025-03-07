@@ -1,4 +1,4 @@
-import { AccountModel } from './accountmodel.db';
+import { AccountModel } from './accountModel.db';
 import { AccountStatsModel } from './accountStatsModel.db';
 import { GamestateModel } from './gamestateModel.db';
 
@@ -8,7 +8,7 @@ AccountModel.hasOne(AccountStatsModel, {
     onDelete: 'CASCADE',  // Cascade delete if AccountModel is deleted
 });
 
-AccountModel.hasOne(GamestateModel, {
+AccountModel.hasMany(GamestateModel, {
     foreignKey: 'username',
     onDelete: 'CASCADE',  // Cascade delete if AccountModel is deleted
 });

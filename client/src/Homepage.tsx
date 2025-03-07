@@ -1,5 +1,5 @@
 import React from 'react';
-import { startGame } from './api';
+import { startGame, subscribeToGame } from './api';
 
 
 // style={{height: "calc(100vh - 4rem - 8px)"}}
@@ -21,14 +21,15 @@ const HomePage = () => {
                 <p className="text-center">...</p>
             </div>
             <div className="homepage-half-section d-flex align-items-center justify-content-center">
-                <a href="gameboard.html">
+            
 
                     {/* Start Playing button */}
                     <button type="button" className="btn btn-primary btn-lg" onClick={ async () => {
-                        await startGame();
+                        await subscribeToGame();
+                        alert("test");
                     }}>Start playing!</button>
 
-                </a>
+            
             </div>
         </section>
     </div>

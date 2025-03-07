@@ -3,9 +3,10 @@ import { Choice } from "../model/choices.enum";
 import { Account } from "../model/account.interface";
 import { IAccountService } from "./account.service.interface";
 import { IGamestateService } from "./gamestate.service.interface";
-import { GamestateModel } from '../../db/modelloader';
+import { AccountModel, GamestateModel } from '../../db/modelloader';
+import { winnerOfGame } from "../model/winnerOfGame.enum";
 
-export class GamestateDBService implements IGamestateService {
+export class GamestateDBService implements IGamestateService<Choice> {
     private accountService: IAccountService;
 
 
@@ -16,6 +17,36 @@ export class GamestateDBService implements IGamestateService {
     };
     constructor(accountService: IAccountService) {
         this.accountService = accountService;
+    }
+    async subscribeToGame(username: string): Promise<boolean | undefined> {
+        const user: Account|undefined = await this.accountService.findAccount(username);
+        console.log("sanity check");
+        console.log(user);
+        if(user === null){
+            return undefined; //user does not exist.
+        }
+        const userGamestate: GamestateModel | null = await GamestateModel.findOne({
+            attributes: ['username'],
+            where: {
+                username: username
+            }
+        });
+        console.log(userGamestate);
+        //if a user is not subcribe to this game, subscribe them with the following parameters.
+        if (userGamestate === null) {
+           await GamestateModel.create({
+                username:username,
+                playerScore:0,
+                opponentScore:0,
+                gameName: "Rock paper scissors",
+                gameThreshold: 4,
+                winnerOfGame: winnerOfGame.noWinner
+            });
+            return true;
+        }else{
+            return false; //User is already subscribed to this game.
+        }
+
     }
     // Starts a new game -> reset the state
     // Exposed for the router layer so player can request to start a new game 
@@ -44,11 +75,13 @@ export class GamestateDBService implements IGamestateService {
     // Exposed for the router layer, so player can play lé Sten Sax Påse :)
 
     //TODO: Should perhaps return Gamestate, it should definetly check the database for winner of Game.
-    async makeMove(username: string, playerChoice: Choice): Promise<number | undefined> {
+    async makeMove(username: string, playerInput: Choice ): Promise<Gamestate | undefined> {
+        // Checks in the database if there is a user with that username, and they they are subscribed to this game
         const userGamestate: GamestateModel | null = await GamestateModel.findOne({
-            attributes: ['username', 'playerScore', 'opponentScore'],
+            attributes: ['username', 'playerScore', 'opponentScore', 'gameName', 'gameThreshold', 'winnerOfGame'],
             where: {
-                username: username
+                username: username,
+                gameName: "Rock paper scissors"
             }
         });
         if (userGamestate === null) {
@@ -56,13 +89,19 @@ export class GamestateDBService implements IGamestateService {
         }
 
         // Proceed with the move and determine winner
-        this.currentGame.playerChoice = playerChoice;
+        this.currentGame.playerChoice = playerInput;
         this.currentGame.opponentChoice = this.getOpponentChoice();
         const result = await this.determineWinner(userGamestate);
 
+        const gamestate:Gamestate = {
+            playerScore: userGamestate.dataValues.playerScore,
+            opponentScore: userGamestate.dataValues.opponentScore,
+            gameName: userGamestate.dataValues.gameName,
+            gameThreshold: userGamestate.dataValues.gameThreshold,
+            winnerOfGame: userGamestate.dataValues.winnerOfGame
+        };
 
-
-        return result;
+        return gamestate;
     }
 
 
@@ -80,51 +119,89 @@ export class GamestateDBService implements IGamestateService {
     // Returns  1 if player scored
     // Returns  0 if it's a draw
     // Returns -1 if opponent scored
-    private async determineWinner(userGamestate: GamestateModel): Promise<number> {
+    private async determineWinner(userGamestate: GamestateModel): Promise<Gamestate> {
         const { playerChoice, opponentChoice } = this.currentGame;
-
+        const gamestate:Gamestate = {
+            playerScore: userGamestate.dataValues.playerScore,
+            opponentScore: userGamestate.dataValues.opponentScore,
+            gameName: userGamestate.dataValues.gameName,
+            gameThreshold: userGamestate.dataValues.gameThreshold,
+            winnerOfGame: userGamestate.dataValues.winnerOfGame
+        };
         if (playerChoice === opponentChoice) {
-            return 0; // Draw
+            return gamestate ; // Draw: return gamestate as it is
         }
-
-        // The cases in which the player scores
+        /*
+        The cases in which the player scores, update the database playerscore and return an updated gamestate
+        This happens whenever playerScore is < gameThreshold
+        if playerScore is >= gameThreshold it instead updates playerScore and opponentScore to be 0, and also
+        it sets winnerOfGame to be winnerOfGame.playerWins, signifying that the player has won.
+        This happens to both the local gamestate variable, and also to the database.
+        */
         if ((playerChoice === Choice.Rock && opponentChoice === Choice.Scissors) ||
             (playerChoice === Choice.Paper && opponentChoice === Choice.Rock) ||
             (playerChoice === Choice.Scissors && opponentChoice === Choice.Paper)) {
-                if(userGamestate.dataValues.playerScore < 4){
+                if(userGamestate.dataValues.playerScore < userGamestate.dataValues.gameThreshold){
                 await userGamestate.update({
                     playerScore: userGamestate.playerScore +1,
                 });
+                gamestate.playerScore++;
                 }else{
-                    await this.startGame(userGamestate.dataValues.username);
+                    await userGamestate.update({
+                        playerScore: 0,
+                        opponentScore:0,
+                        winnerOfGame: winnerOfGame.playerWins,
+
+                    });
+                    gamestate.playerScore =0; gamestate.opponentScore = 0; gamestate.winnerOfGame = winnerOfGame.playerWins;
                     await this.accountService.updateAccount(userGamestate.dataValues.username, 1);
                 }
-            return 1;
+            return gamestate;
         }
 
-        // If it's not draw & player didn't score -> opponent scored
-        if(userGamestate.dataValues.opponentScore <4){
+        // Similar to above, but that a user has lost the game.
+        if(userGamestate.dataValues.opponentScore < userGamestate.dataValues.gameThreshold){
         await userGamestate.update({
             opponentScore: userGamestate.opponentScore +1,
         });
+        gamestate.opponentScore++;
         }else{
-            await this.startGame(userGamestate.dataValues.username);
+            await userGamestate.update({
+                playerScore: 0,
+                opponentScore:0,
+                winnerOfGame: winnerOfGame.opponentWins,
+
+            });
+            gamestate.playerScore =0; gamestate.opponentScore = 0; gamestate.winnerOfGame = winnerOfGame.playerWins;
             await this.accountService.updateAccount(userGamestate.dataValues.username, -1);
         }
-        return -1; // PC wins
+        return gamestate; // PC wins
     }
 
     // GET current game score. Explosed for the router layer.
     async getGameScore(username: string): Promise<Gamestate | undefined> {
         //Checks if valid User then returns the Users gamestate.
-        const user: Account | undefined = await this.accountService.findAccount(username);
-        if (user === undefined) {
-            return undefined
+        const userGamestate: GamestateModel | null = await GamestateModel.findOne({
+            attributes: ['username', 'playerScore', 'opponentScore', 'gameName', 'gameThreshold', 'winnerOfGame'],
+            where: {
+                username: username
+            }
+        });
+        if (userGamestate === null) {
+            return undefined;
         }
-        if (Object.values(user.gamestate).every(value => Number.isNaN(value))) {
+        const gamestate:Gamestate = {
+            playerScore: userGamestate.dataValues.playerScore,
+            opponentScore: userGamestate.dataValues.opponentScore,
+            gameName: userGamestate.dataValues.gameName,
+            gameThreshold: userGamestate.dataValues.gameThreshold,
+            winnerOfGame: userGamestate.dataValues.winnerOfGame
+        };
+
+        if (Object.values(gamestate).every(value => Number.isNaN(value))) {
             throw new Error("Both fields in the state are NaN.");
         } else {
-            return JSON.parse(JSON.stringify(user.gamestate));
+            return JSON.parse(JSON.stringify(gamestate));
         }
     }
 }

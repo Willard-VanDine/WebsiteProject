@@ -25,21 +25,15 @@ export class AccountDBService implements IAccountService {
         if (user === undefined) {
             const salt = bcrypt.genSaltSync(10);
             
-            AccountModel.create({
+            await AccountModel.create({
                 username: username,
                 password: bcrypt.hashSync(password, salt),
             });
             
-            AccountStatsModel.create({
+            await AccountStatsModel.create({
                 username: username,
                 accountLosses: 0,
                 accountWins: 0
-            });
-            GamestateModel.create({
-                username: username,
-                playerScore: 0,
-                opponentScore: 0
-
             });
             return true;
         }else{
@@ -59,7 +53,7 @@ export class AccountDBService implements IAccountService {
             }
         });
 
-
+     
 
         const stats: AccountStatsModel | null = await AccountStatsModel.findOne({
             attributes: ['username', 'accountWins', 'accountLosses'],
@@ -67,26 +61,19 @@ export class AccountDBService implements IAccountService {
                 username: username
             }
         });
-        const game: GamestateModel | null = await GamestateModel.findOne({
-            attributes: ['username', 'playerScore', 'opponentScore'],
-            where: {
-                username: username
-            }
-        });
-        if ((user != null) && (stats != null) && (game != null)) {
+        if ((user != null) && (stats != null) ) {
             const account: Account | undefined = {
                 username: user?.dataValues.username,
                 password: user.dataValues.password,
                 accountWins: stats.dataValues.accountWins,
                 accountLosses: stats.dataValues.accountLosses,
-                gamestate: {
-                    playerScore: game.dataValues.playerScore,
-                    opponentScore: game.dataValues.opponentScore
-                }
-            }
+            };
+  
             if (pass === undefined) {
+            
                 return account;
             } else {
+
                 if (bcrypt.compareSync(pass, user.dataValues.password)) {
                     return account;
                 } else {
@@ -101,6 +88,10 @@ export class AccountDBService implements IAccountService {
             return undefined;
         }
     }
+
+    //This method takes a strng to identify a user, if the user does not exist return undefined
+    //If the user does exist then check the value on number, if it is 1 then increase accountWins for that User
+    //If number is -1 then increase AccountLosses for that User
     async updateAccount(username: string, number: number): Promise<void | undefined> {
 
         const stats: AccountStatsModel | null = await AccountStatsModel.findOne({
@@ -114,11 +105,11 @@ export class AccountDBService implements IAccountService {
         }
 
         if (number === 1) {
-            stats.update({
+            await stats.update({
                 accountWins: stats.accountWins + 1,
             });
         } else if (number === -1) {
-            stats.update({
+            await stats.update({
                 accountLosses: stats.accountLosses + 1,
             });
         }
