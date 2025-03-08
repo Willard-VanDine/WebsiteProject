@@ -38,33 +38,7 @@ export function gamestateRouter(gamestateService: IGamestateService<Choice>): Ro
             res.status(500).send(e.message);
         }
     })
-    gamestateRouter.get("/subscribeToGame", async (
-        req: GamestateRequest,
-        res: Response<boolean|undefined>
-    ) => {
-        try {
-            if (!req.session.username) {
-                res.status(401).send(undefined);
-                return;
-            }
-           
-            const isSubscribed: boolean|undefined = await gamestateService.subscribeToGame(req.session.username);
-            if(isSubscribed === true){
-                res.status(201).send(true);
-                return;
-            }
-            if(isSubscribed === false){
-                res.status(200).send(false);
-                return;
-            }else{
-                res.status(401).send(undefined); //The user does not exist
-            }
-            
-        }
-        catch (e: any) {
-            res.status(500).send(e.message);
-        }
-    });
+    
     // ===== POST REQUEST ===== //
 
     gamestateRouter.post("/", async (
@@ -92,6 +66,33 @@ export function gamestateRouter(gamestateService: IGamestateService<Choice>): Ro
             }
             // TODO: Make sure the player gets an accountwin/loss if score reaches 5.;
             res.status(201).send(result);
+        }
+        catch (e: any) {
+            res.status(500).send(e.message);
+        }
+    })
+    gamestateRouter.post("/subscribeToGame", async (
+        req: GamestateRequest,
+        res: Response<void|string>
+    ) => {
+        try {
+            if (!req.session.username) {
+                res.status(401).send("You are not logged in!");
+                return;
+            }
+           
+            const isSubscribed: boolean|undefined = await gamestateService.subscribeToGame(req.session.username);
+            if(isSubscribed === true){
+                res.status(201).send("You subscribed succesfully");
+                return;
+            }
+            if(isSubscribed === false){
+                res.status(200).send("User is already subscribed");
+                return;
+            }else{
+                res.status(401).send("Such a user does not exist!");
+            }
+            
         }
         catch (e: any) {
             res.status(500).send(e.message);

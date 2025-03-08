@@ -41,7 +41,7 @@ export function accountRouter(accountService: IAccountService): Router {
 
     //get request for checking the session returns a JSON LoggedIn:true if true and false if false
     //it is used to verify if a user is logged in, and updates the website respectively
-    accountRouter.get("/check-session", async (req: AccountRequest, res: Response<LoggedIn>)=>{
+    accountRouter.get("/check-session", async (req: AccountRequest, res: Response<LoggedIn|string>)=>{
         try{
         if(req.session.username){
             res.status(200).send({loggedIn:true});
@@ -66,13 +66,13 @@ export function accountRouter(accountService: IAccountService): Router {
         }
     })
     //Register a user by using the constructor. Does not return a body, just a 201 message.
-    accountRouter.post("/", async (req: CreateAccountRequest, res: Response) => {
+    accountRouter.post("/", async (req: CreateAccountRequest, res: Response<void|string>) => {
         try{
         if(await accountService.registerAccount(req.body.username, req.body.password) === true){
             res.status(201).send();
         }
         else{
-             res.status(401).send();
+             res.status(401).send("Such an account already exists!");
         }
         }catch(e:any){
             res.status(500).send(e.message);
@@ -80,11 +80,11 @@ export function accountRouter(accountService: IAccountService): Router {
     })
     //Login, takes an input that is a username and a password
     //If the Credentials are correct or if the user does not exist then 
-    accountRouter.post("/login", async (req: CreateAccountRequest, res: Response<void>) => {
+    accountRouter.post("/login", async (req: CreateAccountRequest, res: Response<void|string>) => {
         try{
         const user: Account | undefined = await accountService.findAccount(req.body.username, req.body.password);
         if (user === undefined) {
-            res.status(401).send();
+            res.status(401).send("You are not logged in!");
             return;
         }
         
@@ -94,17 +94,7 @@ export function accountRouter(accountService: IAccountService): Router {
             res.status(500).send(e.message);
         }
     })
-    accountRouter.post("/accountscore", async (req: UpdateAccount, res: Response) => {
-        try{
-        if(await accountService.updateAccount(req.session.username,req.body.number) === undefined){
-            res.status(401).send();
-            return;
-        }
-        res.status(200).send();
-        }catch(e:any){
-            res.status(500).send(e.message);
-        }
-    })
+    
 
     return accountRouter;
 }
