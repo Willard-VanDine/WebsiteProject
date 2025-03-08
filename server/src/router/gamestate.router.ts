@@ -87,9 +87,7 @@ export function gamestateRouter(gamestateService: IGamestateService<Choice>): Ro
             // Handle input of correct type, execute action.
             const result: Gamestate | undefined = await gamestateService.makeMove(req.session.username, choiceFromPlayer);
             if (result === undefined) {
-                console.log("User logged in as " + req.session.username + " no longer exists");
-                delete req.session.username;
-                res.status(401).send("Not logged in");
+                res.status(401).send("You are not subsribed to the game!");
                 return;
             }
             // TODO: Make sure the player gets an accountwin/loss if score reaches 5.;
