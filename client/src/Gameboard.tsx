@@ -1,8 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Choice } from "../../server/src/model/choices.enum";
 import { Gamestate } from "../../server/src/model/gamestate.interface";
-import { getGameScore, makeMove, accountScore,} from './api';
-import { Result } from '../../server/src/model/result.interface';
+import { getGameScore, makeMove } from './api';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { winnerOfGame } from '../../server/src/model/winnerOfGame.enum';
