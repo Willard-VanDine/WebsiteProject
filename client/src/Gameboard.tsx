@@ -5,6 +5,7 @@ import { getGameScore, makeMove, accountScore,} from './api';
 import { Result } from '../../server/src/model/result.interface';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import { winnerOfGame } from '../../server/src/model/winnerOfGame.enum';
 
 interface GameBoardProps {
   isLoggedIn: boolean | null;
@@ -97,19 +98,17 @@ export default GameBoard;
 
 // Helper fucntion to handle game logic
 const handleChoice = async (playerChoice: Choice) => {
-  // await updateView(playerChoice);
-  const result: Gamestate | undefined = await makeMove(playerChoice);
-  if (result === undefined) {
-    console.log(`Result undefined after choosing ${playerChoice}`);
+  const currentScores: Gamestate | undefined = await getGameScore();
+  if (currentScores === undefined) {
+    console.log("Unable to retrieve game score.");
     return;
   }
-  alert(result);
+  await updateView(playerChoice, currentScores);
   await updateScore();
-  
 };
-/*
-const updateView = async (playerChoice: Choice) =>{
-  const result: Result | undefined = await makeMove(playerChoice);
+
+const updateView = async (playerChoice: Choice, gamestateBefore: Gamestate) => {
+  const result: Gamestate | undefined = await makeMove(playerChoice);
   if (result === undefined) {
     console.log(`Result undefined after choosing ${playerChoice}`);
     return;
@@ -120,12 +119,24 @@ const updateView = async (playerChoice: Choice) =>{
   const opponentVisual = document.getElementById("OpponentVisual");
 
   if (gameroundResultText && playerVisual && opponentVisual) {
-    const opponentChoice = result.result === 1 ?
-      (playerChoice === Choice.Rock ? "Scissors" : playerChoice === Choice.Paper ? "Rock" : "Paper") :
-      result.result === 0 ? playerChoice :
-        (playerChoice === Choice.Rock ? "Paper" : playerChoice === Choice.Paper ? "Scissors" : "Rock");
+    let opponentChoice: Choice;
 
-    gameroundResultText.innerHTML = result.result === 1 ? "You Win!" : result.result === 0 ? "Draw!" : "You Lose!";
+    // Determine the outcome based on score difference
+    if (result.playerScore > gamestateBefore.playerScore) {
+      // Player wins as player's score increased
+      gameroundResultText.innerHTML = "You Win!";
+      opponentChoice = (playerChoice === Choice.Rock) ? Choice.Scissors :
+                       (playerChoice === Choice.Paper) ? Choice.Rock : Choice.Paper;
+    } else if (result.opponentScore > gamestateBefore.opponentScore) {
+      // Opponent wins as opponent's score increased
+      gameroundResultText.innerHTML = "You Lose!";
+      opponentChoice = (playerChoice === Choice.Rock) ? Choice.Paper :
+                       (playerChoice === Choice.Paper) ? Choice.Scissors : Choice.Rock;
+    } else {
+      // Draw as score did not change.
+      gameroundResultText.innerHTML = "Draw!";
+      opponentChoice = playerChoice;  // Opponent made the same choice
+    }
 
     // If the elements are images, update their src and alt attributes.
     if (playerVisual instanceof HTMLImageElement && opponentVisual instanceof HTMLImageElement) {
@@ -140,7 +151,7 @@ const updateView = async (playerChoice: Choice) =>{
     }
   }
 }
-*/
+
 //Updates the score, and increase the wins and losses.
 //TODO: might have to be separated.
 const updateScore = async () => {
