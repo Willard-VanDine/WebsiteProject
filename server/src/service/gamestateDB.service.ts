@@ -3,7 +3,7 @@ import { Choice } from "../model/choices.enum";
 import { Account } from "../model/account.interface";
 import { IAccountService } from "./account.service.interface";
 import { IGamestateService } from "./gamestate.service.interface";
-import { AccountModel, GamestateModel } from '../../db/modelloader';
+import { GamestateModel } from '../../db/modelloader';
 import { winnerOfGame } from "../model/winnerOfGame.enum";
 
 export class GamestateDBService implements IGamestateService<Choice> {
