@@ -55,9 +55,7 @@ export async function getGameScore(): Promise<Gamestate | undefined> {
 // actually play the game
 export async function subscribeToGame(): Promise<boolean | undefined> {
     try {
-        alert("hej");
         const response = await axios.get<boolean|undefined>(`${BASE_URL}/gameboard/subscribeToGame`);
-        alert(response.status);
         if (response.status === 201){
             return true;
         }

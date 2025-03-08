@@ -20,15 +20,14 @@ export class GamestateDBService implements IGamestateService<Choice> {
     }
     async subscribeToGame(username: string): Promise<boolean | undefined> {
         const user: Account | undefined = await this.accountService.findAccount(username);
-        console.log("sanity check");
-        console.log(user);
         if (user === null) {
             return undefined; //user does not exist.
         }
         const userGamestate: GamestateModel | null = await GamestateModel.findOne({
             attributes: ['username'],
             where: {
-                username: username
+                username: username,
+                gameName: "Rock paper scissors"
             }
         });
         console.log(userGamestate);
@@ -202,7 +201,8 @@ export class GamestateDBService implements IGamestateService<Choice> {
         const userGamestate: GamestateModel | null = await GamestateModel.findOne({
             attributes: ['username', 'playerScore', 'opponentScore', 'gameName', 'gameThreshold', 'winnerOfGame'],
             where: {
-                username: username
+                username: username,
+                gameName: "Rock paper scissors"
             }
         });
         if (userGamestate === null) {
