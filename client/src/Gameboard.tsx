@@ -150,6 +150,13 @@ const updateView = async (playerChoice: Choice, gamestateBefore: Gamestate) => {
       opponentVisual.innerHTML = opponentChoice;
     }
   }
+
+  if(result.winnerOfGame === winnerOfGame.playerWins){
+    alert("You won the game!");
+  } 
+  else if(result.winnerOfGame === winnerOfGame.opponentWins){
+    alert("You lost the game!");
+  }
 }
 
 //Updates the score, and increase the wins and losses.

@@ -19,10 +19,10 @@ export class GamestateDBService implements IGamestateService<Choice> {
         this.accountService = accountService;
     }
     async subscribeToGame(username: string): Promise<boolean | undefined> {
-        const user: Account|undefined = await this.accountService.findAccount(username);
+        const user: Account | undefined = await this.accountService.findAccount(username);
         console.log("sanity check");
         console.log(user);
-        if(user === null){
+        if (user === null) {
             return undefined; //user does not exist.
         }
         const userGamestate: GamestateModel | null = await GamestateModel.findOne({
@@ -34,16 +34,16 @@ export class GamestateDBService implements IGamestateService<Choice> {
         console.log(userGamestate);
         //if a user is not subcribe to this game, subscribe them with the following parameters.
         if (userGamestate === null) {
-           await GamestateModel.create({
-                username:username,
-                playerScore:0,
-                opponentScore:0,
+            await GamestateModel.create({
+                username: username,
+                playerScore: 0,
+                opponentScore: 0,
                 gameName: "Rock paper scissors",
                 gameThreshold: 4,
                 winnerOfGame: winnerOfGame.noWinner
             });
             return true;
-        }else{
+        } else {
             return false; //User is already subscribed to this game.
         }
 
@@ -66,16 +66,15 @@ export class GamestateDBService implements IGamestateService<Choice> {
         };
 
         await userGamestate.update({
-            playerScore:0,
-            opponentScore:0
+            playerScore: 0,
+            opponentScore: 0
         });
     }
 
     // Make a move for the player and for the "PC opponent" (POST-request I believe, as above)
     // Exposed for the router layer, so player can play lé Sten Sax Påse :)
-
-    //TODO: Should perhaps return Gamestate, it should definetly check the database for winner of Game.
-    async makeMove(username: string, playerInput: Choice ): Promise<Gamestate | undefined> {
+    // Returns the gamestate representing the state of the game after the move is made.
+    async makeMove(username: string, playerInput: Choice): Promise<Gamestate | undefined> {
         // Checks in the database if there is a user with that username, and they they are subscribed to this game
         const userGamestate: GamestateModel | null = await GamestateModel.findOne({
             attributes: ['username', 'playerScore', 'opponentScore', 'gameName', 'gameThreshold', 'winnerOfGame'],
@@ -93,12 +92,12 @@ export class GamestateDBService implements IGamestateService<Choice> {
         this.currentGame.opponentChoice = this.getOpponentChoice();
         const result = await this.determineWinner(userGamestate);
 
-        const gamestate:Gamestate = {
-            playerScore: userGamestate.dataValues.playerScore,
-            opponentScore: userGamestate.dataValues.opponentScore,
-            gameName: userGamestate.dataValues.gameName,
-            gameThreshold: userGamestate.dataValues.gameThreshold,
-            winnerOfGame: userGamestate.dataValues.winnerOfGame
+        const gamestate: Gamestate = {
+            playerScore: result.playerScore,
+            opponentScore: result.opponentScore,
+            gameName: result.gameName,
+            gameThreshold: result.gameThreshold,
+            winnerOfGame: result.winnerOfGame
         };
 
         return gamestate;
@@ -116,69 +115,88 @@ export class GamestateDBService implements IGamestateService<Choice> {
     }
 
     // Determine winner between player and opponent
-    // Returns  1 if player scored
-    // Returns  0 if it's a draw
-    // Returns -1 if opponent scored
+    // Returns the new gamestate representing the game after winner is determined.
     private async determineWinner(userGamestate: GamestateModel): Promise<Gamestate> {
         const { playerChoice, opponentChoice } = this.currentGame;
-        const gamestate:Gamestate = {
+        const gamestate: Gamestate = {
             playerScore: userGamestate.dataValues.playerScore,
             opponentScore: userGamestate.dataValues.opponentScore,
             gameName: userGamestate.dataValues.gameName,
             gameThreshold: userGamestate.dataValues.gameThreshold,
-            winnerOfGame: userGamestate.dataValues.winnerOfGame
+            winnerOfGame: winnerOfGame.noWinner, // Default to noWinner initially
         };
+
+        // Case when it's a draw
         if (playerChoice === opponentChoice) {
-            return gamestate ; // Draw: return gamestate as it is
+            return gamestate;  // No winner in this round
         }
+
         /*
         The cases in which the player scores, update the database playerscore and return an updated gamestate
-        This happens whenever playerScore is < gameThreshold
-        if playerScore is >= gameThreshold it instead updates playerScore and opponentScore to be 0, and also
-        it sets winnerOfGame to be winnerOfGame.playerWins, signifying that the player has won.
+        This happens whenever playerScore is < gameThreshold. Also set winner to none, since no one has won the game
+        in this state. If playerScore is >= gameThreshold it updates playerScore and opponentScore to be 0 and sets a winner.
         This happens to both the local gamestate variable, and also to the database.
         */
-        if ((playerChoice === Choice.Rock && opponentChoice === Choice.Scissors) ||
+        if (
+            (playerChoice === Choice.Rock && opponentChoice === Choice.Scissors) ||
             (playerChoice === Choice.Paper && opponentChoice === Choice.Rock) ||
-            (playerChoice === Choice.Scissors && opponentChoice === Choice.Paper)) {
-                if(userGamestate.dataValues.playerScore < userGamestate.dataValues.gameThreshold){
+            (playerChoice === Choice.Scissors && opponentChoice === Choice.Paper)
+        ) {
+            if (userGamestate.dataValues.playerScore < userGamestate.dataValues.gameThreshold) {
+                // Player scores a point, but game is not over yet
                 await userGamestate.update({
-                    playerScore: userGamestate.playerScore +1,
+                    playerScore: userGamestate.playerScore + 1,
+                    winnerOfGame: winnerOfGame.noWinner, // We don't have a winner at this state of the game.
                 });
                 gamestate.playerScore++;
-                }else{
-                    await userGamestate.update({
-                        playerScore: 0,
-                        opponentScore:0,
-                        winnerOfGame: winnerOfGame.playerWins,
-
-                    });
-                    gamestate.playerScore =0; gamestate.opponentScore = 0; gamestate.winnerOfGame = winnerOfGame.playerWins;
-                    await this.accountService.updateAccount(userGamestate.dataValues.username, 1);
-                }
-            return gamestate;
+            } else {
+                // Player wins the game (threshold reached)
+                await userGamestate.update({
+                    playerScore: 0,
+                    opponentScore: 0,
+                    winnerOfGame: winnerOfGame.playerWins, // Declare player as winner
+                });
+                gamestate.playerScore = 0;
+                gamestate.opponentScore = 0;
+                gamestate.winnerOfGame = winnerOfGame.playerWins; // Set the winner for this round
+                await this.accountService.updateAccount(userGamestate.dataValues.username, 1);
+            }
+            return gamestate; // Player won this round
         }
 
-        // Similar to above, but that a user has lost the game.
-        if(userGamestate.dataValues.opponentScore < userGamestate.dataValues.gameThreshold){
-        await userGamestate.update({
-            opponentScore: userGamestate.opponentScore +1,
-        });
-        gamestate.opponentScore++;
-        }else{
-            await userGamestate.update({
-                playerScore: 0,
-                opponentScore:0,
-                winnerOfGame: winnerOfGame.opponentWins,
-
-            });
-            gamestate.playerScore =0; gamestate.opponentScore = 0; gamestate.winnerOfGame = winnerOfGame.playerWins;
-            await this.accountService.updateAccount(userGamestate.dataValues.username, -1);
+        // Check if the opponent wins the round
+        if (
+            (opponentChoice === Choice.Rock && playerChoice === Choice.Scissors) ||
+            (opponentChoice === Choice.Paper && playerChoice === Choice.Rock) ||
+            (opponentChoice === Choice.Scissors && playerChoice === Choice.Paper)
+        ) {
+            if (userGamestate.dataValues.opponentScore < userGamestate.dataValues.gameThreshold) {
+                // Opponent scores a point, but game is not over yet
+                await userGamestate.update({
+                    opponentScore: userGamestate.opponentScore + 1,
+                    winnerOfGame: winnerOfGame.noWinner, // We don't have a winner at this state of the game.
+                });
+                gamestate.opponentScore++;
+            } else {
+                // Opponent wins the game (threshold reached)
+                await userGamestate.update({
+                    playerScore: 0,
+                    opponentScore: 0,
+                    winnerOfGame: winnerOfGame.opponentWins, // Declare opponent as winner
+                });
+                gamestate.playerScore = 0;
+                gamestate.opponentScore = 0;
+                gamestate.winnerOfGame = winnerOfGame.opponentWins; // Set the winner for this round
+                await this.accountService.updateAccount(userGamestate.dataValues.username, -1);
+            }
+            return gamestate; // Opponent won this round
         }
+
         return gamestate; // PC wins
     }
 
-    // GET current game score. Explosed for the router layer.
+
+    // GET current game score. Exposed for the router layer.
     async getGameScore(username: string): Promise<Gamestate | undefined> {
         //Checks if valid User then returns the Users gamestate.
         const userGamestate: GamestateModel | null = await GamestateModel.findOne({
@@ -190,7 +208,7 @@ export class GamestateDBService implements IGamestateService<Choice> {
         if (userGamestate === null) {
             return undefined;
         }
-        const gamestate:Gamestate = {
+        const gamestate: Gamestate = {
             playerScore: userGamestate.dataValues.playerScore,
             opponentScore: userGamestate.dataValues.opponentScore,
             gameName: userGamestate.dataValues.gameName,
