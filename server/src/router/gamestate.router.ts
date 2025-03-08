@@ -29,8 +29,7 @@ export function gamestateRouter(gamestateService: IGamestateService<Choice>): Ro
             }
             const gamestate: Gamestate | undefined = await gamestateService.getGameScore(req.session.username);
             if (!gamestate) {
-                delete req.session.username;
-                res.status(401).send("Not logged in");
+                res.status(401).send("You are not subscribed to game");
                 return;
             }
             res.status(200).send(gamestate);
