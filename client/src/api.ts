@@ -1,5 +1,4 @@
 import axios from "axios";
-import { Result } from "../../server/src/model/result.interface";
 import { Choice } from "../../server/src/model/choices.enum";
 import { Gamestate } from "../../server/src/model/gamestate.interface";
 import { LoggedIn } from "../../server/src/model/loggedin.interface";
