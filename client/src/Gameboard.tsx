@@ -121,12 +121,12 @@ const updateView = async (playerChoice: Choice, gamestateBefore: Gamestate) => {
     let opponentChoice: Choice;
 
     // Determine the outcome based on score difference
-    if (result.playerScore > gamestateBefore.playerScore) {
+    if (result.playerScore > gamestateBefore.playerScore || result.winnerOfGame === winnerOfGame.playerWins) {
       // Player wins as player's score increased
       gameroundResultText.innerHTML = "You Win!";
       opponentChoice = (playerChoice === Choice.Rock) ? Choice.Scissors :
                        (playerChoice === Choice.Paper) ? Choice.Rock : Choice.Paper;
-    } else if (result.opponentScore > gamestateBefore.opponentScore) {
+    } else if (result.opponentScore > gamestateBefore.opponentScore || result.winnerOfGame === winnerOfGame.opponentWins) {
       // Opponent wins as opponent's score increased
       gameroundResultText.innerHTML = "You Lose!";
       opponentChoice = (playerChoice === Choice.Rock) ? Choice.Paper :
@@ -138,11 +138,19 @@ const updateView = async (playerChoice: Choice, gamestateBefore: Gamestate) => {
     }
 
     // If the elements are images, update their src and alt attributes.
-    if (playerVisual instanceof HTMLImageElement && opponentVisual instanceof HTMLImageElement) {
+    if (playerVisual instanceof HTMLImageElement && opponentVisual instanceof HTMLImageElement
+      && result.winnerOfGame === winnerOfGame.noWinner) {
       playerVisual.src = `src/assets/Player${playerChoice}.png`;
       playerVisual.alt = `Player chose ${playerChoice}`;
       opponentVisual.src = `src/assets/Opponent${opponentChoice}.png`;
       opponentVisual.alt = `Opponent chose ${opponentChoice}`;
+    } else if (playerVisual instanceof HTMLImageElement && opponentVisual instanceof HTMLImageElement
+      && result.winnerOfGame !== winnerOfGame.noWinner) {
+      playerVisual.src = `src/assets/react.svg`;
+      playerVisual.alt = `Default icon for player`;
+      opponentVisual.src = `src/assets/react.svg`;
+      opponentVisual.alt = `Default icon for opponent`;
+      gameroundResultText.innerHTML = "Make a choice to play!";
     } else {
       // If something goes wrong with images, update innerHTML as text fallback values.
       playerVisual.innerHTML = playerChoice;

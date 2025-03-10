@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { SetStateAction, useState } from 'react';
 import Sidenav from './Sidenav';  // Import the Sidenav component
 import Container from './Container';  // Import the Container which holds the content logic
 import { Routes, Route } from 'react-router-dom'
@@ -22,14 +22,17 @@ const Content = () => {
       <div className='container'>
         <div className="row">
           <div className="col-2">
-            <Sidenav isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>
+            <Sidenav isLoggedIn={isLoggedIn} setIsLoggedIn={
+              (loginstatus : SetStateAction<boolean | null>) => {setIsLoggedIn(loginstatus)}}/>
           </div>
           <div className='col-10'>
           <Container>
             <Routes>
               <Route path="/" element={<Homepage />} />
               <Route path="/gameboard" element={<Gameboard isLoggedIn={isLoggedIn}  />} />
-              <Route path="/login" element={<Login isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />} />
+              <Route path="/login" element={<Login isLoggedIn={isLoggedIn} setIsLoggedIn={
+                  (loginstatus : SetStateAction<boolean | null>) => {setIsLoggedIn(loginstatus)}
+                } />} />
               <Route path="/register" element={<Register />} />
               <Route path="/account" element={<AccountPage isLoggedIn={isLoggedIn} /> } />
             </Routes>
