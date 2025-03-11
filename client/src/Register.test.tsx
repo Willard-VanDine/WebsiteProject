@@ -62,7 +62,7 @@ describe('Register Component', () => {
         const registerButton = screen.getByRole('button', { name: /Register/i });
 
        // Simulate click on the register button & user typing
-        await act(() => {
+        await waitFor(() => {
             fireEvent.change(usernameInput, { target: { value: 'a' } });
             fireEvent.change(passwordInput, { target: { value: 'a' } });
             fireEvent.click(registerButton);
@@ -71,8 +71,7 @@ describe('Register Component', () => {
         // Expects to send a post request to register an user
         await waitFor(() => {
             // Expects to send a post request to register an user
-            //expect(mockedAxios.post).toHaveBeenCalledWith("http://localhost:8080/account", { username: '', password: ''});
-            
+            expect(mockedAxios.post).not.toHaveBeenCalledWith("http://localhost:8080/account", { username: "a", password: "a"});
             // Verify alert
             expect(global.alert).toHaveBeenCalledWith("Please make sure your username and password meet the length requirements.");
         })

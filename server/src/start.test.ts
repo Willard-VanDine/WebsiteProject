@@ -1,35 +1,53 @@
-import * as SuperTest from "supertest";
-//import { app } from "./start";
-import { Gamestate } from "./model/gamestate.interface";
+// Session supertesting for the start.ts file
 
+import { winnerOfGame } from "./model/winnerOfGame.enum";
 
-//TODO: Check why the tests are not independent, this is an attempt to solve but it does not help.
-// REMEMBER THAT THE ORDER MATTERS! the test cases' order needs to be considered.
- let request: SuperTest.Agent;
- let app = require("./start");
- beforeEach(() => {
-    app = require("./start");
-    request = SuperTest.default(app.app);
-  });
+var session = require('supertest-session');
+var myApp = require('./start');
 
-  test("Trying to fetch data when gameboard not initilized", async () => {
-    const res2 = await request.get("/gameboard");
+var testSession: any = null;
+
+beforeEach(function () {
+    testSession = session(myApp.app);
+});
+
+test("Trying to fetch data when gameboard not initilized", async () => {
+    const res2 = await testSession.get("/gameboard");
     console.log(res2.statusCode);
-    expect(res2.statusCode).toEqual(500);
+    expect(res2.statusCode).toEqual(401);
 
 });
- 
- 
+
 
 test("Initializing gameboard", async () => {
 
-    const res1 = await request.post("/gameboard/startgame").send();
-    expect(res1.status).toStrictEqual(201);
-    const res2 = await request.get("/gameboard");
-    expect(res2.statusCode).toEqual(200);
+    await testSession.post("/account").send({
+        username: "MrDragon2112",
+        password: "12345"
+    });
+
+    const res1 = await testSession.post("/account/login").send(
+        {
+            username: "MrDragon2112",
+            password: "12345"
+        }
+    );
+
+    await testSession.post("/gameboard/subscribeToGame").send(
+        {
+            session: testSession
+        }
+    );
+
+    expect(res1.status).toStrictEqual(200);
+    const res2 = await testSession.get("/gameboard");
+    expect(res2.statusCode).toStrictEqual(200);
     expect(res2.body).toEqual({
+        gameName: "Rock paper scissors",
+        gameThreshold: 4,
         playerScore: 0,
-        opponentScore: 0
+        opponentScore: 0,
+        winnerOfGame: winnerOfGame.noWinner
     });
 
 });

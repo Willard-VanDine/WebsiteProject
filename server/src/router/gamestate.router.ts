@@ -1,8 +1,6 @@
 import express, { Request, Response, Router } from "express";
-import { GamestateService } from "../service/gamestate.service";
 import { Gamestate } from "../model/gamestate.interface";
 import { Choice } from "../model/choices.enum";
-import { Result } from "../model/result.interface";
 import { IGamestateService } from "../service/gamestate.service.interface";
 
 // Initialize router paths:
@@ -29,7 +27,7 @@ export function gamestateRouter(gamestateService: IGamestateService<Choice>): Ro
             }
             const gamestate: Gamestate | undefined = await gamestateService.getGameScore(req.session.username);
             if (!gamestate) {
-                res.status(401).send("You are not subscribed to game");
+                res.status(400).send("You are not subscribed to game");
                 return;
             }
             res.status(200).send(gamestate);
