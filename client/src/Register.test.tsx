@@ -49,7 +49,7 @@ describe('Register Component', () => {
 
     
             
-    test('Register an invalid user', async () => {
+    test('Register a user with too short name/password', async () => {
         render(
             <MemoryRouter>
                 <Register />
@@ -63,8 +63,8 @@ describe('Register Component', () => {
 
        // Simulate click on the register button & user typing
         await act(() => {
-            fireEvent.change(usernameInput, { target: { value: '' } });
-            fireEvent.change(passwordInput, { target: { value: '' } });
+            fireEvent.change(usernameInput, { target: { value: 'a' } });
+            fireEvent.change(passwordInput, { target: { value: 'a' } });
             fireEvent.click(registerButton);
         });
 
@@ -74,7 +74,45 @@ describe('Register Component', () => {
             //expect(mockedAxios.post).toHaveBeenCalledWith("http://localhost:8080/account", { username: '', password: ''});
             
             // Verify alert
-            expect(global.alert).toHaveBeenCalledWith("Some sort of error occured!");
+            expect(global.alert).toHaveBeenCalledWith("Please make sure your username and password meet the length requirements.");
+        })
+
+    });
+
+    test('Attempt to register an already existing user', async () => {
+        render(
+            <MemoryRouter>
+                <Register />
+            </MemoryRouter>
+            );
+
+        // Field input & register button
+        const usernameInput = screen.getByLabelText(/Username/i);
+        const passwordInput  = screen.getByLabelText(/Password/i);
+        const registerButton = screen.getByRole('button', { name: /Register/i });
+
+        // Simulate click on the register button & user typing
+        (registerUser as jest.Mock).mockResolvedValueOnce(true);
+        await act(() => {
+            fireEvent.change(usernameInput, { target: { value: 'Whitebeard' } });
+            fireEvent.change(passwordInput, { target: { value: '12345678' } });
+            fireEvent.click(registerButton);
+        });
+        
+        (registerUser as jest.Mock).mockResolvedValueOnce(false);
+        await act(() => {
+            fireEvent.change(usernameInput, { target: { value: 'Whitebeard' } });
+            fireEvent.change(passwordInput, { target: { value: '12345678' } });
+            fireEvent.click(registerButton);
+        });
+
+        // Expects to send a post request to register an user
+        await waitFor(() => {
+            // Expects to send a post request to register an user
+            //expect(mockedAxios.post).toHaveBeenCalledWith("http://localhost:8080/account", { username: '', password: ''});
+            
+            // Verify alert
+            expect(global.alert).toHaveBeenCalledWith("An error occurred!");
 
             // Ensure the navigation happenes to the homepage
             expect(mockedNavigate).toHaveBeenCalledWith("/");
@@ -110,7 +148,7 @@ describe('Register Component', () => {
 
             
             // Verify alert
-            expect(global.alert).toHaveBeenCalledWith("Register succesfull!");
+            expect(global.alert).toHaveBeenCalledWith("Registration successful!");
 
             // Ensure the navigation happenes to the homepage
             expect(mockedNavigate).toHaveBeenCalledWith("/");

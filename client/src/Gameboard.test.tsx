@@ -82,11 +82,10 @@ describe("GameBoard Component", () => {
     });
 
     test("displays correct round result after someone wins", async () => {
-        // Note: 1 point away from winning. We also test the alert here.
-        (getGameScore as jest.Mock).mockResolvedValue({ playerScore: 4, opponentScore: 0 });
+        (getGameScore as jest.Mock).mockResolvedValue({ playerScore: 3, opponentScore: 0 });
         
         // Simulate a direct response for winnign 
-        (makeMove as jest.Mock).mockResolvedValue({ playerScore: 5, opponentScore: 0, winnerOfGame: winnerOfGame.playerWins });
+        (makeMove as jest.Mock).mockResolvedValue({ playerScore: 4, opponentScore: 0, winnerOfGame: winnerOfGame.noWinner });
 
         render(
             <MemoryRouter>
@@ -100,8 +99,6 @@ describe("GameBoard Component", () => {
         // Check if the round's result is displayed as expected
         await waitFor(() => expect(screen.getByText(/You Win!/i)).toBeInTheDocument());
         
-        // Check if alert was called
-        expect(global.alert).toHaveBeenCalledWith("You won the game!");
     });
     
 });

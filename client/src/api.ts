@@ -83,7 +83,7 @@ export async function registerUser(username: string, password: string): Promise<
         if (response.status === 201) {
             return true;
         }
-        if (response.status === 401) {
+        if (response.status === 400 || response.status === 401) {
             return false;
         }
         else throw new Error(`Unexpected status code: ${response.status}`);
@@ -101,7 +101,7 @@ export async function login(username: string, password: string): Promise<LoggedI
         const response = await axios.post(`${BASE_URL}/account/login`, { username: username, password: password });
         if (response.status === 200)
             return { loggedIn: true };
-        else if (response.status === 400 || response.status === 401)
+        if (response.status === 400 || response.status === 401)
             return { loggedIn: false };
         else
             throw new Error(`Unexpected status code: ${response.status}`);

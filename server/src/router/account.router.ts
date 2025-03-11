@@ -73,8 +73,8 @@ export function accountRouter(accountService: IAccountService): Router {
                 return;
             }
 
-            else if(req.body.password.length < 6 || req.body.password.length > 50){
-                res.status(400).send("Password must be at least 6 characters long and no longer than 50.");
+            else if(req.body.password.length < 5 || req.body.password.length > 50){
+                res.status(400).send("Password must be at least 5 characters long and no longer than 50.");
                 return;
             }
 

@@ -61,7 +61,6 @@ export default function RegisterScreen() {
                         }
                         navigate("/");
                     }}
-                    disabled={!isUsernameValid || !isPasswordValid}
                 >
                     Register
                 </button>
