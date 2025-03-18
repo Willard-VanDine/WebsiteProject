@@ -30,7 +30,7 @@ const HomePage = () => {
                         else if(isSubscribed === false)
                             alert("You are already subscribed to Rock, paper and scissors!")
                         else
-                            alert("you succesfully subscribed to Rock, paper and scissors!")
+                            alert("You succesfully subscribed to Rock, paper and scissors!")
                     }}>subscribe to Rock, paper and scissors!</button>
 
             
