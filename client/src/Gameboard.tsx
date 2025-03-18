@@ -99,7 +99,7 @@ export default GameBoard;
 const handleChoice = async (playerChoice: Choice) => {
   const currentScores: Gamestate | undefined = await getGameScore();
   if (currentScores === undefined) {
-    console.log("Unable to retrieve game score.");
+    //console.log("Unable to retrieve game score.");
     return;
   }
   await updateView(playerChoice, currentScores);
@@ -109,7 +109,7 @@ const handleChoice = async (playerChoice: Choice) => {
 const updateView = async (playerChoice: Choice, gamestateBefore: Gamestate) => {
   const result: Gamestate | undefined = await makeMove(playerChoice);
   if (result === undefined) {
-    console.log(`Result undefined after choosing ${playerChoice}`);
+    //console.log(`Result undefined after choosing ${playerChoice}`);
     return;
   }
 
@@ -171,7 +171,7 @@ const updateView = async (playerChoice: Choice, gamestateBefore: Gamestate) => {
 const updateScore = async () => {
   const newScores: Gamestate | undefined = await getGameScore();
   if (!newScores) {
-    console.log("Gamestate is undefined when getting score");
+    //console.log("Gamestate is undefined when getting score");
     return;
   }
   

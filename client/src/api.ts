@@ -19,10 +19,12 @@ export async function makeMove(playerChoice: Choice): Promise<Gamestate | undefi
         const response = await axios.patch<Gamestate>(`${BASE_URL}/gameboard`, { playerChoice: playerChoice });
         if (response.status === 201)
             return response.data;
-        else if (response.status === 400 || response.status === 401)
+        if (response.status === 400 || response.status === 401)
             return undefined;
-        else
+        else {
+            alert("Server issues encountered: " + response.status);
             throw new Error(`Unexpected status code: ${response.status}`);
+        }
     }
     catch (e: any) {
         console.log(e);
@@ -43,7 +45,10 @@ export async function getGameScore(): Promise<Gamestate | undefined> {
             return response.data;
         if(response.status === 401)
             return undefined;
-        else throw new Error(`Unexpected status code: ${response.status}`);
+        else {
+            alert("Server issues encountered: " + response.status);
+            throw new Error(`Unexpected status code: ${response.status}`);
+        }
     }
     catch (e: any) {
         console.log(e)
@@ -56,15 +61,17 @@ export async function subscribeToGame(): Promise<boolean | undefined> {
     try {
         const response = await axios.post(`${BASE_URL}/gameboard/subscribeToGame`);
         if (response.status === 201){
-            alert("It worked!");
+            //alert("It worked!");
             return true;
         }
         if(response.status === 200){
-            alert("It failed");
+            //alert("It failed");
             return false;
         }
-        else
+        else{
+            alert("Server issues encountered: " + response.status);
             throw new Error(`Unexpected status code: ${response.status}`);
+        }
     }
     catch (e: any) {
         console.log(e);
@@ -86,7 +93,10 @@ export async function registerUser(username: string, password: string): Promise<
         if (response.status === 400 || response.status === 401) {
             return false;
         }
-        else throw new Error(`Unexpected status code: ${response.status}`);
+        else {
+            alert("Server issues encountered: " + response.status);
+            throw new Error(`Unexpected status code: ${response.status}`);
+        }
     } catch (e: any) {
         console.log(e);
         return undefined;
@@ -103,8 +113,10 @@ export async function login(username: string, password: string): Promise<LoggedI
             return { loggedIn: true };
         if (response.status === 400 || response.status === 401)
             return { loggedIn: false };
-        else
+        else{
+            alert("Server issues encountered: " + response.status);
             throw new Error(`Unexpected status code: ${response.status}`);
+        }
 
     } catch (e: any) {
         console.log(e);
@@ -123,6 +135,7 @@ export async function checkSession(): Promise<LoggedIn | undefined> {
             return response.data;
         }
         else {
+            alert("Server issues encountered: " + response.status);
             throw new Error(`Unexpected status code: ${response.status}`);
         }
     } catch (e: any) {
@@ -141,7 +154,10 @@ export async function logOut(): Promise<void> {
         const response = await axios.get<void>(`${BASE_URL}/account/logOut`);
         if (response.status === 204)
             return;
-        else throw new Error(`Unexpected status code: ${response.status}`);
+        else {
+            alert("Server issues encountered: " + response.status);
+            throw new Error(`Unexpected status code: ${response.status}`);
+        }
 
     } catch (e: any) {
         console.log(e);
@@ -159,9 +175,10 @@ export async function getAccount(): Promise<UserContent | undefined> {
         const response = await axios.get<UserContent>(`${BASE_URL}/account/getAccount`);
         if (response.status === 200) {
             return response.data;
-        } else if (response.status === 401) {
+        } if (response.status === 401) {
             return undefined;
         } else {
+            alert("Server issues encountered: " + response.status);
             throw new Error(`Unexpected status code: ${response.status}`);
         }
     }
@@ -176,6 +193,10 @@ export async function accountScore(number: number): Promise<void> {
         const response = await axios.post(`${BASE_URL}/account/accountscore`, { number: number });
         if (response.status === 200)
             return;
+        else {
+            alert("Server issues encountered: " + response.status);
+            throw new Error(`Unexpected status code: ${response.status}`);
+        }
 
     } catch (e: any) {
         console.log(e);

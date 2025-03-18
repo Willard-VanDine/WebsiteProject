@@ -1,5 +1,4 @@
 import { Account } from "../model/account.interface";
-import bcrypt from "bcrypt";
 
 export interface IAccountService {
     

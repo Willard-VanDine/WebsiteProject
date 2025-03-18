@@ -1,5 +1,4 @@
-import React from 'react';
-import { startGame, subscribeToGame } from './api';
+import { subscribeToGame } from './api';
 
 
 // style={{height: "calc(100vh - 4rem - 8px)"}}
@@ -26,7 +25,7 @@ const HomePage = () => {
                     {/* Start Playing button */}
                     <button type="button" className="btn btn-primary btn-lg" onClick={ async () => {
                         await subscribeToGame();
-                        alert("test");
+                        //alert("test");
                     }}>Start playing!</button>
 
             

@@ -1,6 +1,5 @@
 import { Gamestate } from "../model/gamestate.interface";
 import { Choice } from "../model/choices.enum";
-import { AccountService } from "./account.service";
 import { Account } from "../model/account.interface";
 import { IAccountService } from "./account.service.interface";
 

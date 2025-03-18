@@ -1,6 +1,5 @@
 // Session supertesting for the start.ts file
 
-import exp from "constants";
 import { winnerOfGame } from "./model/winnerOfGame.enum";
 import { sequelize } from "../db/conn";
 

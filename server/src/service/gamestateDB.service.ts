@@ -30,7 +30,7 @@ export class GamestateDBService implements IGamestateService<Choice> {
                 gameName: "Rock paper scissors"
             }
         });
-        console.log(userGamestate);
+        //console.log(userGamestate);
         //if a user is not subcribe to this game, subscribe them with the following parameters.
         if (userGamestate === null) {
             await GamestateModel.create({
