@@ -63,3 +63,10 @@ sketch of the client-side application. The content of client_mockup is deprecate
 The final report is located in the Root Directory of the project!
 It contains an introduction to the application, use cases, user manual (installation guide + use & navigation of app), 
 design (components, backend API, database design), and project group responsibilities.
+
+## Note regarding testing
+The project has extensive testing for frontend, backend services, and routing. 
+Seemingly, having an in-memory postgres database for testing is not supported by Sequelize (unlike sqlite), and as such, 
+when running the tests it will use the current Postgres database connected to port 5432, 
+and then **DROP ALL CONTENT OF ALL TABLES** for next time the tests are run.
+We strongly advice that you open a fresh testing database on port 5432 before running server-side tests.
