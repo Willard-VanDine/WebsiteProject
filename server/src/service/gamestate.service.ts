@@ -1,10 +1,10 @@
 import { Gamestate } from "../model/gamestate.interface";
 import { Choice } from "../model/choices.enum";
-import { AccountService } from "./account.service";
 import { Account } from "../model/account.interface";
+import { IAccountService } from "./account.service.interface";
 
 export class GamestateService {
-    private accountService: AccountService;
+    private accountService: IAccountService;
     
 
     // Represent an ongoing game, start "fresh" with no choices made yet.
@@ -12,7 +12,7 @@ export class GamestateService {
         playerChoice: null,
         opponentChoice: null
     };
-    constructor(accountService: AccountService){
+    constructor(accountService: IAccountService){
         this.accountService = accountService;
     }
     // Starts a new game -> reset the state

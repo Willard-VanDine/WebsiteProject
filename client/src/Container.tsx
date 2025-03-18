@@ -1,6 +1,4 @@
 import React from 'react';
-import GameBoard from './Gameboard';
-import HomePage from './Homepage';
 
 
 

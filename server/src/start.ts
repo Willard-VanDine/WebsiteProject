@@ -4,8 +4,11 @@ import { gamestateRouter } from "./router/gamestate.router";
 import cors from "cors";
 import session from "express-session";
 import dotenv from "dotenv";
-import { AccountService } from "./service/account.service";
-import { GamestateService } from "./service/gamestate.service";
+import { IAccountService } from "./service/account.service.interface";
+import { AccountDBService } from "./service/accountDB.service";
+import { IGamestateService } from "./service/gamestate.service.interface";
+import { GamestateDBService } from "./service/gamestateDB.service";
+import { Choice } from "./model/choices.enum";
 
 export const app = express();
 dotenv.config();
@@ -24,7 +27,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
-const accountService = new AccountService();
-const gamestateService = new GamestateService(accountService);
+const accountService: IAccountService = new AccountDBService();
+const gamestateService:IGamestateService<Choice> = new GamestateDBService(accountService);
 app.use("/account", accountRouter(accountService));
 app.use("/gameboard", gamestateRouter(gamestateService));

@@ -1,10 +1,10 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Choice } from "../../server/src/model/choices.enum";
 import { Gamestate } from "../../server/src/model/gamestate.interface";
-import { getGameScore, makeMove,accountScore,startGame } from './api';
-import { Result } from '../../server/src/model/result.interface';
+import { getGameScore, makeMove } from './api';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import { winnerOfGame } from '../../server/src/model/winnerOfGame.enum';
 
 interface GameBoardProps {
   isLoggedIn: boolean | null;
@@ -38,26 +38,26 @@ const GameBoard = ({ isLoggedIn }: GameBoardProps) => {
 
             {/* Choice visual area */}
             <div className='choicecontainer'>
-              <img 
-                  id="PlayerVisual" 
-                  data-testid="PlayerVisual" 
-                  alt="Player" 
-                  style={{ width: "15rem", height: "10rem" }}
-                  src='src/assets/react.svg'
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'src/assets/react.svg';
-                  }}
-                />
-                <img 
-                  id="OpponentVisual" 
-                  data-testid="OpponentVisual" 
-                  alt="Opponent"
-                  style={{ width: "15rem", height: "10rem" }}
-                  src='src/assets/react.svg'
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'src/assets/react.svg';
-                  }}
-                />
+              <img
+                id="PlayerVisual"
+                data-testid="PlayerVisual"
+                alt="Player"
+                style={{ width: "15rem", height: "10rem" }}
+                src='src/assets/react.svg'
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'src/assets/react.svg';
+                }}
+              />
+              <img
+                id="OpponentVisual"
+                data-testid="OpponentVisual"
+                alt="Opponent"
+                style={{ width: "15rem", height: "10rem" }}
+                src='src/assets/react.svg'
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'src/assets/react.svg';
+                }}
+              />
             </div>
           </div>
 
@@ -75,7 +75,7 @@ const GameBoard = ({ isLoggedIn }: GameBoardProps) => {
                 <button
                   key={choice}
                   type="button"
-                  className="btn btn-primary btn-lg col-2"
+                  className="btn gameboard-btn btn-lg col-2"
                   onClick={() => handleChoice(choice)}>
                   {choice}
                 </button>
@@ -97,9 +97,20 @@ export default GameBoard;
 
 // Helper fucntion to handle game logic
 const handleChoice = async (playerChoice: Choice) => {
-  const result: Result | undefined = await makeMove(playerChoice);
+  const currentScores: Gamestate | undefined = await getGameScore();
+  if (currentScores === undefined) {
+    //console.log("Unable to retrieve game score.");
+    alert("Please Subscribe to rock, paper and scissors before you try to play!")
+    return;
+  }
+  await updateView(playerChoice, currentScores);
+  await updateScore();
+};
+
+const updateView = async (playerChoice: Choice, gamestateBefore: Gamestate) => {
+  const result: Gamestate | undefined = await makeMove(playerChoice);
   if (result === undefined) {
-    console.log(`Result undefined after choosing ${playerChoice}`);
+    //console.log(`Result undefined after choosing ${playerChoice}`);
     return;
   }
 
@@ -108,47 +119,63 @@ const handleChoice = async (playerChoice: Choice) => {
   const opponentVisual = document.getElementById("OpponentVisual");
 
   if (gameroundResultText && playerVisual && opponentVisual) {
-    const opponentChoice = result.result === 1 ? 
-      (playerChoice === Choice.Rock ? "Scissors" : playerChoice === Choice.Paper ? "Rock" : "Paper") :
-      result.result === 0 ? playerChoice : 
-      (playerChoice === Choice.Rock ? "Paper" : playerChoice === Choice.Paper ? "Scissors" : "Rock");
+    let opponentChoice: Choice;
 
-    gameroundResultText.innerHTML = result.result === 1 ? "You Win!" : result.result === 0 ? "Draw!" : "You Lose!";
+    // Determine the outcome based on score difference
+    if (result.playerScore > gamestateBefore.playerScore || result.winnerOfGame === winnerOfGame.playerWins) {
+      // Player wins as player's score increased
+      gameroundResultText.innerHTML = "You Win!";
+      opponentChoice = (playerChoice === Choice.Rock) ? Choice.Scissors :
+                       (playerChoice === Choice.Paper) ? Choice.Rock : Choice.Paper;
+    } else if (result.opponentScore > gamestateBefore.opponentScore || result.winnerOfGame === winnerOfGame.opponentWins) {
+      // Opponent wins as opponent's score increased
+      gameroundResultText.innerHTML = "You Lose!";
+      opponentChoice = (playerChoice === Choice.Rock) ? Choice.Paper :
+                       (playerChoice === Choice.Paper) ? Choice.Scissors : Choice.Rock;
+    } else {
+      // Draw as score did not change.
+      gameroundResultText.innerHTML = "Draw!";
+      opponentChoice = playerChoice;  // Opponent made the same choice
+    }
 
     // If the elements are images, update their src and alt attributes.
-    if (playerVisual instanceof HTMLImageElement && opponentVisual instanceof HTMLImageElement) {
+    if (playerVisual instanceof HTMLImageElement && opponentVisual instanceof HTMLImageElement
+      && result.winnerOfGame === winnerOfGame.noWinner) {
       playerVisual.src = `src/assets/Player${playerChoice}.png`;
       playerVisual.alt = `Player chose ${playerChoice}`;
       opponentVisual.src = `src/assets/Opponent${opponentChoice}.png`;
       opponentVisual.alt = `Opponent chose ${opponentChoice}`;
+    } else if (playerVisual instanceof HTMLImageElement && opponentVisual instanceof HTMLImageElement
+      && result.winnerOfGame !== winnerOfGame.noWinner) {
+      playerVisual.src = `src/assets/react.svg`;
+      playerVisual.alt = `Default icon for player`;
+      opponentVisual.src = `src/assets/react.svg`;
+      opponentVisual.alt = `Default icon for opponent`;
+      gameroundResultText.innerHTML = "Make a choice to play!";
     } else {
       // If something goes wrong with images, update innerHTML as text fallback values.
       playerVisual.innerHTML = playerChoice;
       opponentVisual.innerHTML = opponentChoice;
     }
   }
-  updateScore();
-};
+
+  if(result.winnerOfGame === winnerOfGame.playerWins){
+    alert("You won the game!");
+  } 
+  else if(result.winnerOfGame === winnerOfGame.opponentWins){
+    alert("You lost the game!");
+  }
+}
+
 //Updates the score, and increase the wins and losses.
 //TODO: might have to be separated.
 const updateScore = async () => {
   const newScores: Gamestate | undefined = await getGameScore();
   if (!newScores) {
-    console.log("Gamestate is undefined when getting score");
+    //console.log("Gamestate is undefined when getting score");
     return;
   }
-  if(newScores.playerScore === 5){
-    await accountScore(1);
-    await startGame();
-    newScores.playerScore = 0;
-    newScores.opponentScore = 0;
-
-  }else if(newScores.opponentScore === 5){
-    await accountScore(-1);
-    await startGame();
-    newScores.playerScore = 0;
-    newScores.opponentScore = 0;
-  }
+  
 
   const playerScore = document.getElementById("PlayerScore");
   const opponentScore = document.getElementById("OpponentScore");
