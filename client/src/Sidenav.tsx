@@ -12,7 +12,6 @@ interface SidenavProps {
 
         
     
-// style={{height: "calc(100vh - 4rem - 8px)"}}
 const Sidenav = ({isLoggedIn, setIsLoggedIn} : SidenavProps) => {
   const LogoutButton = async () => {
     await logOut();
@@ -21,7 +20,7 @@ const Sidenav = ({isLoggedIn, setIsLoggedIn} : SidenavProps) => {
   };
   return (
     // container class ensures consistency between pages 
-    <aside className ="container rounder " style={{height: "calc(100vh - 4rem - 8px)", display: "inline-flex", 
+    <aside className ="container rounder heightFixer" style={{display: "inline-flex", 
       flexDirection: "column", minWidth:"96px" } } >
       
           <NavLink to="/" end>            

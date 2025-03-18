@@ -1,11 +1,10 @@
 import { subscribeToGame } from './api';
 
 
-// style={{height: "calc(100vh - 4rem - 8px)"}}
 const HomePage = () => {
   return (
     // container class ensures consistency between pages 
-    <div className="container d-flex flex-column justify-content-between" style={{height: "calc(100vh - 4rem - 8px)"}}>
+    <div className="container d-flex flex-column justify-content-between heightFixer">
         
         <article className="homepage-article rounder">
             <p className = "text-center">
