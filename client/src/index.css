@@ -217,7 +217,6 @@ footer{
 
 /* We use this to more cleanly split a section in 2 vertical halves */
 .homepage-half-section {
-  background-color: #ADB6C4;
   height: 49%;
   width : 100%;
   flex-direction: column;
