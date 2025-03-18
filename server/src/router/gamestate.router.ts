@@ -37,9 +37,9 @@ export function gamestateRouter(gamestateService: IGamestateService<Choice>): Ro
         }
     })
     
-    // ===== POST REQUEST ===== //
+    // ===== PATCH REQUEST ===== //
 
-    gamestateRouter.post("/", async (
+    gamestateRouter.patch("/", async (
         req: CreateGamestateRequest,
         res: Response<Gamestate | String>
     ) => {
@@ -69,6 +69,8 @@ export function gamestateRouter(gamestateService: IGamestateService<Choice>): Ro
             res.status(500).send(e.message);
         }
     })
+
+    // ===== POST REQUEST ===== //
     gamestateRouter.post("/subscribeToGame", async (
         req: GamestateRequest,
         res: Response<void|string>

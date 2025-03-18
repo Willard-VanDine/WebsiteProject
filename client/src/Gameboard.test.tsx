@@ -51,9 +51,9 @@ describe("GameBoard Component", () => {
         // First call returns initial scores.
         (getGameScore as jest.Mock).mockResolvedValueOnce({ playerScore: 0, opponentScore: 0 });
         
-        // We implement makeMove to check post-call
+        // We implement makeMove to check patch-call
         (makeMove as jest.Mock).mockImplementation(async (playerChoice: Choice) => {
-            await mockedAxios.post("http://localhost:8080/gameboard", { playerChoice });
+            await mockedAxios.patch("http://localhost:8080/gameboard", { playerChoice });
             return ({ playerScore: 1, opponentScore: 0, winnerOfGame: winnerOfGame.noWinner });
         });
 
@@ -74,7 +74,7 @@ describe("GameBoard Component", () => {
 
         // Check that axios.post was called with the correct URL and payload :)
         await waitFor(() =>
-            expect(mockedAxios.post).toHaveBeenCalledWith("http://localhost:8080/gameboard", { playerChoice: "Rock" })
+            expect(mockedAxios.patch).toHaveBeenCalledWith("http://localhost:8080/gameboard", { playerChoice: "Rock" })
         );
 
         // ...and the updated scores are displayed

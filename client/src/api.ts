@@ -8,7 +8,7 @@ axios.defaults.withCredentials = true;
 const BASE_URL = "http://localhost:8080";
 
 /*
-Takes a Choice and makes an Axios post request on the location BASE_URL/gameboard in the router layer, sending in the playerChoice
+Takes a Choice and makes an Axios patch request on the location BASE_URL/gameboard in the router layer, sending in the playerChoice
 If it receives a 201 response it will return a result, however, if it response has status 400, or 401 it returns undefined
 Result is a JSON objekt that merely contains a number.
 If it returns any other status code it will throw an error, this is mostly for error code 500.
@@ -16,7 +16,7 @@ If it throws an error, it will log the error in the browser terminal and return 
 */
 export async function makeMove(playerChoice: Choice): Promise<Gamestate | undefined> {
     try {
-        const response = await axios.post<Gamestate>(`${BASE_URL}/gameboard`, { playerChoice: playerChoice });
+        const response = await axios.patch<Gamestate>(`${BASE_URL}/gameboard`, { playerChoice: playerChoice });
         if (response.status === 201)
             return response.data;
         else if (response.status === 400 || response.status === 401)
