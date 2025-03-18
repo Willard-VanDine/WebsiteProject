@@ -22,7 +22,7 @@ const Sidenav = ({isLoggedIn, setIsLoggedIn} : SidenavProps) => {
   return (
     // container class ensures consistency between pages 
     <aside className ="container rounder " style={{height: "calc(100vh - 4rem - 8px)", display: "inline-flex", 
-      flexDirection: "column"} } >
+      flexDirection: "column", minWidth:"96px" } } >
       
           <NavLink to="/" end>            
             <div className='btn bg-dark text-white mt-1 mb-1'>

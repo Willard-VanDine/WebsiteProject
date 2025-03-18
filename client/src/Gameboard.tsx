@@ -100,6 +100,7 @@ const handleChoice = async (playerChoice: Choice) => {
   const currentScores: Gamestate | undefined = await getGameScore();
   if (currentScores === undefined) {
     //console.log("Unable to retrieve game score.");
+    alert("Please Subscribe to rock, paper and scissors before you try to play!")
     return;
   }
   await updateView(playerChoice, currentScores);

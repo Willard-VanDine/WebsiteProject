@@ -7,7 +7,9 @@ var session = require('supertest-session');
 var myApp = require('./start');
 
 var testSession: any = null;
-
+//NOTE TO GRADER: For some reason we could not be able to make the in memory version of the database to work.
+//We tried to create overwrite te sequelize with an in memory version of the database, but it did not work.
+//Instead we just created a testdatabase that hosts on the same port.
 
 beforeEach(function () {
     testSession = session(myApp.app);

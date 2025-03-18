@@ -21,11 +21,11 @@ const Content = () => {
     <div className="Content pt-1 pb-1" >
       <div className='container'>
         <div className="row">
-          <div className="col-3">
+          <div className="col-2">
             <Sidenav isLoggedIn={isLoggedIn} setIsLoggedIn={
               (loginstatus : SetStateAction<boolean | null>) => {setIsLoggedIn(loginstatus)}}/>
           </div>
-          <div className='col-9'>
+          <div className='col-10'>
           <Container>
             <Routes>
               <Route path="/" element={<Homepage />} />
