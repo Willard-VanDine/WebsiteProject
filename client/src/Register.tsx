@@ -60,7 +60,7 @@ export default function RegisterScreen() {
                             alert("An error occurred!");
                         }
                         navigate("/");
-                    }}
+                    }} className="btn btn-primary btn-dark"
                 >
                     Register
                 </button>

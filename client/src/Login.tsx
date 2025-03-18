@@ -62,7 +62,7 @@ const LoginScreen = ({ isLoggedIn, setIsLoggedIn }: LoginProps) => {
                     />
                 </p>
                 <p>
-                    <button onClick={handleLogin}>Log In</button>
+                    <button onClick={handleLogin} className="btn btn-primary btn-dark">Log In</button>
                 </p>
                 <NavLink to="/register" end>
                     Register new user
