@@ -25,6 +25,10 @@ export function accountRouter(accountService: IAccountService): Router {
     //If such User exists then return username, accountwins and accountlosses
     accountRouter.get("/getAccount", async (req: AccountRequest, res: Response<UserContent | String>) => {
         try {
+            if (req.session.username === undefined){
+                res.status(400).send("You are not logged in!");
+                return;
+            }
             const account: Account | undefined = await accountService.findAccount(req.session.username);
             //if such a user exist then return the properties otherwise message
             if ((req.session.username != undefined) && (account != undefined)) {
